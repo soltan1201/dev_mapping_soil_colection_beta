@@ -1,0 +1,275 @@
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1985_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1985_12
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1987_15
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1989_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1989_12
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1993_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_1997_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2000_14
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2002_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2005_14
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2006_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2009_12
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2010_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2010_14
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2014_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2014_12
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2018_11
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2018_12
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2020_13
+acessando a  users/blobo170/Degradacao/shp_AMAZONIA_2020_14
+acessando a  users/blobo170/Degradacao/shp_CERRADO_1985_35
+acessando a  users/blobo170/Degradacao/shp_CERRADO_1989_35
+acessando a  users/blobo170/Degradacao/shp_CERRADO_1993_35
+acessando a  users/blobo170/Degradacao/shp_CERRADO_1994_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_1997_35
+acessando a  users/blobo170/Degradacao/shp_CERRADO_1998_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2002_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2004_31
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2006_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2010_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2014_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2015_32
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2018_33
+acessando a  users/blobo170/Degradacao/shp_CERRADO_2019_32
+acessando a  users/blobo170/Degradacao/shp_MATAATLANTICA_1985_41
+acessando a  users/blobo170/Degradacao/shp_MATAATLANTICA_1989_41
+acessando a  users/blobo170/Degradacao/shp_MATAATLANTICA_1993_41
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1985_51
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1985_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1989_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1994_51
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1994_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1997_51
+acessando a  users/blobo170/Degradacao/shp_PAMPA_1998_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_2002_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_2005_52
+acessando a  users/blobo170/Degradacao/shp_PAMPA_2006_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_2010_53
+acessando a  users/blobo170/Degradacao/shp_PAMPA_2011_52
+acessando a  users/blobo170/Degradacao/shp_PAMPA_2014_53
+------------------------------------------------------------
+# 0 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1985_34
+ # 1 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1988_31
+ # 2 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1988_32
+ # 3 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1990_34
+ # 4 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1993_31
+ # 5 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1995_34
+ # 6 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_1998_31
+ # 7 acessando a ==> users/blobo170/shpEndmembers/shp_CERRADO_2003_31
+###############################################################################
+ # 0 acessando a ==> users/trabalhofran/degradacao/shp_AMAZONIA_2000_12
+ # 1 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_1986_32
+ # 2 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_1989_34
+ # 3 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_1994_34
+ # 4 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_1999_34
+ # 5 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2001_32
+ # 6 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2004_34
+ # 7 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2006_32
+ # 8 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2009_31
+ # 9 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2009_34
+ # 10 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2011_32
+ # 11 acessando a ==> users/trabalhofran/degradacao/shp_CERRADO_2019_31
+ # 12 acessando a ==> users/trabalhofran/degradacao/shp_MATAATLANTICA_2010_41
+ # 13 acessando a ==> users/trabalhofran/degradacao/shp_MATAATLANTICA_2015_41
+ # 14 acessando a ==> users/trabalhofran/degradacao/shp_MATAATLANTICA_2020_41
+ # 15 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_1987_42
+ # 16 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_1995_44
+ # 17 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2000_44
+ # 18 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2000_46
+ # 19 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2000_47
+ # 20 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2005_41
+ # 21 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2005_44
+ # 22 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2005_46
+ # 23 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2005_47
+ # 24 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2010_41
+ # 25 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2010_44
+ # 26 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2010_45
+ # 27 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2010_46
+ # 28 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2010_47
+ # 29 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2015_41
+ # 30 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2015_44
+ # 31 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2015_45
+ # 32 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2015_47
+ # 33 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2020_41
+ # 34 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2020_44
+ # 35 acessando a ==> users/trabalhofran/degradacao/shp_MATA_ATLANTICA_2020_47
+ # 36 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_1990_51
+ # 37 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_1990_52
+ # 38 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_1991_52
+ # 39 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_1999_52
+ # 40 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2000_31
+ # 41 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2001_51
+ # 42 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2002_51
+ # 43 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2003_51
+ # 44 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2004_51
+ # 45 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2006_32
+ # 46 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2011_53
+ # 47 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2012_53
+ # 48 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2013_53
+ # 49 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2014_51
+ # 50 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2015_51
+ # 51 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2016_51
+ # 52 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2017_51
+ # 53 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2018_51
+ # 54 acessando a ==> users/trabalhofran/degradacao/shp_PAMPA_2019_51
+ # 55 acessando a ==> users/trabalhofran/degradacao/shp_PANTANAL_2000_60
+ # 56 acessando a ==> users/trabalhofran/degradacao/shp_PANTANAL_2005_60
+--------------------------------------------------------------------------
+ # 0 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_1987_33
+ # 1 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2001_32
+ # 2 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2002_33
+ # 3 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2002_35
+ # 4 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2006_32
+ # 5 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2007_35
+ # 6 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2009_31
+ # 7 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2011_32
+ # 8 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2012_35
+ # 9 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2017_33
+ # 10 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2017_35
+ # 11 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2019_31
+ # 12 acessando a ==> users/trabalhofran/shpEndmembers/shp_CERRADO_2020_34
+#############################################################################
+ # 0 acessando a ==> users/trabalhodani/degradacao/shp_AMAZONIA_1985_13
+ # 1 acessando a ==> users/trabalhodani/degradacao/shp_AMAZONIA_1990_13
+ # 2 acessando a ==> users/trabalhodani/degradacao/shp_AMAZONIA_1995_13
+ # 3 acessando a ==> users/trabalhodani/degradacao/shp_AMAZONIA_2000_13
+ # 4 acessando a ==> users/trabalhodani/degradacao/shp_AMAZONIA_2005_13
+ # 5 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1985_31
+ # 6 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1985_33
+ # 7 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1990_31
+ # 8 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1990_33
+ # 9 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1991_31
+ # 10 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1991_32
+ # 11 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1995_31
+ # 12 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_1996_32
+ # 13 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2002_31
+ # 14 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2002_35
+ # 15 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2007_35
+ # 16 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2012_35
+ # 17 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2014_31
+ # 18 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2014_34
+ # 19 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2017_35
+ # 20 acessando a ==> users/trabalhodani/degradacao/shp_CERRADO_2019_34
+ # 21 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1985_45
+ # 22 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1985_46
+ # 23 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1985_47
+ # 24 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1990_45
+ # 25 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1990_46
+ # 26 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1990_47
+ # 27 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1992_42
+ # 28 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1995_45
+ # 29 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1995_46
+ # 30 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1995_47
+ # 31 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_1997_42
+ # 32 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2000_45
+ # 33 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2002_42
+ # 34 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2005_45
+ # 35 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2007_42
+ # 36 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2012_42
+ # 37 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2015_46
+ # 38 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2017_42
+ # 39 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2020_45
+ # 40 acessando a ==> users/trabalhodani/degradacao/shp_MATA_ATLANTICA_2020_46
+ # 41 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1985_52
+ # 42 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1986_51
+ # 43 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1987_51
+ # 44 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1988_52
+ # 45 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1989_52
+ # 46 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1990_52
+ # 47 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1991_51
+ # 48 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1992_51
+ # 49 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1993_51
+ # 50 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1995_51
+ # 51 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1995_52
+ # 52 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1996_51
+ # 53 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1996_52
+ # 54 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1997_52
+ # 55 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1998_51
+ # 56 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1998_52
+ # 57 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_1999_51
+ # 58 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2000_51
+ # 59 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2000_52
+ # 60 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2001_52
+ # 61 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2002_52
+ # 62 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2003_52
+ # 63 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2004_52
+ # 64 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2006_51
+ # 65 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2006_52
+ # 66 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2007_52
+ # 67 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2008_52
+ # 68 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2009_52
+ # 69 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2010_51
+ # 70 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2010_52
+ # 71 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2011_51
+ # 72 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2012_51
+ # 73 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2012_52
+ # 74 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2013_51
+ # 75 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2013_52
+ # 76 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2014_52
+ # 77 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2015_52
+ # 78 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2015_53
+ # 79 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2016_52
+ # 80 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2017_52
+ # 81 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2018_52
+ # 82 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2019_52
+ # 83 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2020_52
+ # 84 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2021_51
+ # 85 acessando a ==> users/trabalhodani/degradacao/shp_PAMPA_2021_52
+ # 86 acessando a ==> users/trabalhodani/degradacao/shp_PANTANAL_2010_60
+ # 87 acessando a ==> users/trabalhodani/degradacao/shp_PANTANAL_2015_60
+ # 88 acessando a ==> users/trabalhodani/degradacao/shp_PANTANAL_2020_60
+ ------------------------------------------------------------------------
+ # 0 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1985_31
+ # 1 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1985_35
+ # 2 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1990_35
+ # 3 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1991_32
+ # 4 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1992_33
+ # 5 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1995_35
+ # 6 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1996_32
+ # 7 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_1997_33
+ # 8 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2000_34
+ # 9 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2005_34
+ # 10 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2007_33
+ # 11 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2010_34
+ # 12 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2012_33
+ # 13 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2014_31
+ # 14 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2016_32
+ # 15 acessando a ==> users/trabalhodani/shpEndmembers/shp_CERRADO_2021_32
+###########################################################################
+ # 0 acessando a ==> users/lazarobritoagro/degradacao/shp_AMAZONIA_1995_12
+ # 1 acessando a ==> users/lazarobritoagro/degradacao/shp_AMAZONIA_2000_15
+ # 2 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1986_52
+ # 3 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1986_53
+ # 4 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1987_52
+ # 5 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1987_53
+ # 6 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1988_51
+ # 7 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1988_53
+ # 8 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1989_51
+ # 9 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1990_53
+ # 10 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1991_53
+ # 11 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1992_52
+ # 12 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1992_53
+ # 13 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1993_52
+ # 14 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1993_53
+ # 15 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1994_52
+ # 16 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1995_53
+ # 17 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1996_53
+ # 18 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1997_53
+ # 19 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_1999_53
+ # 20 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2000_53
+ # 21 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2001_53
+ # 22 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2003_53
+ # 23 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2004_53
+ # 24 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2005_51
+ # 25 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2005_53
+ # 26 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2007_51
+ # 27 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2007_53
+ # 28 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2008_53
+ # 29 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2009_51
+ # 30 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2009_53
+ # 31 acessando a ==> users/lazarobritoagro/degradacao/shp_PAMPA_2020_53
+ # 32 acessando a ==> users/lazarobritoagro/degradacao/shp_PANTANAL_1985_60
+ # 33 acessando a ==> users/lazarobritoagro/degradacao/shp_PANTANAL_1986_60
+ # 34 acessando a ==> users/lazarobritoagro/degradacao/shp_PANTANAL_1990_60
+ # 35 acessando a ==> users/lazarobritoagro/degradacao/shp_PANTANAL_1995_60

@@ -1,0 +1,12 @@
+src/dados/*
+!src/dados/.gitkeep
+src/documentos/*
+!src/documentos/.gitkeep
+src/veranotações Col8V2.txt
+src/veranotações Col8.txt
+src/notas.txt
+src/reportes_processamentos.txt
+src/teste
+src/teste/*
+src/uties
+src/uties/*
