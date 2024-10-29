@@ -1,5 +1,6 @@
 #-*- coding utf-8 -*-
 import ee
+import os
 import gee 
 import sys
 import json
@@ -9,9 +10,15 @@ from datetime import date
 import pandas as pd
 import collections
 collections.Callable = collections.abc.Callable
+from pathlib import Path
+pathparent = str(Path(os.getcwd()).parents[0])
+sys.path.append(pathparent)
+from configure_account_projects_ee import get_current_account, get_project_from_account
+projAccount = get_current_account()
+print(f"projetos selecionado >>> {projAccount} <<<")
 
 try:
-    ee.Initialize()
+    ee.Initialize(project= projAccount)
     print('The Earth Engine package initialized successfully!')
 except ee.EEException as e:
     print('The Earth Engine package failed to initialize!')
@@ -86,7 +93,7 @@ params = {
         'inputAsset': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/mosaics-harmonico',     
         'biomas': "users/SEEGMapBiomas/bioma_1milhao_uf2015_250mil_IBGE_geo_v4_revisao_pampa_lagoas",   
         'mapbiomas': 'projects/mapbiomas-workspace/public/collection8/mapbiomas_collection80_integration_v1',
-        'inputROIsSoil': {'id':'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoil'},
+        'inputROIsSoil': {'id':'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoilB'},
         'inputROIsVeg': {'id':'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsVeg2'}
     },
     'classMapB' : [3, 4, 5, 6, 9,12,13,15,18,19,20,21,22,23,24,25,26,29,30,31,32,33,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,62],
@@ -212,15 +219,15 @@ params = {
     'harmonics': 2,
     'dateInit': '2018-01-01',
     'numeroTask': 3,
-    'numeroLimit': 45,
-    'conta' : {
-        '0': 'superconta',
-        # '0': 'caatinga01',
-        # '8': 'caatinga02',
+    'numeroLimit': 100,
+    'conta' : {        
+        '0': 'caatinga01',
+        '8': 'caatinga02',
         '16': 'caatinga03',
         '24': 'caatinga04',
         '32': 'caatinga05',        
-        '40': 'solkan1201'      
+        '40': 'solkan1201',
+        '60': 'superconta',      
     },
 }
 
@@ -234,13 +241,48 @@ def gerenciador(cont, paramet):
     if str(cont) in numberofChange:
         print("conta ativa >> {} <<".format(paramet['conta'][str(cont)]))        
         gee.switch_user(paramet['conta'][str(cont)])
-        gee.init()        
+        projAccount = get_project_from_account(paramet['conta'][str(cont)])
+        try:
+            ee.Initialize(project= projAccount) # project='ee-cartassol'
+            print('The Earth Engine package initialized successfully!')
+        except ee.EEException as e:
+            print('The Earth Engine package failed to initialize!')       
         gee.tasks(n= paramet['numeroTask'], return_list= True)        
     
     elif cont > paramet['numeroLimit']:
         cont = 0    
     cont += 1    
     return cont
+
+def agregateBandsTexturasGLCM (image):
+
+    print("processing agregateBandsTexturasGLCM")        
+    img = ee.Image(image).toInt32();                
+
+    texturaNir = img.select('min').glcmTexture(3)  
+    savgMin = texturaNir.select('min_savg').divide(10).toInt16()  # promedio
+    dissMin = texturaNir.select('min_diss').toInt16()  # dissimilarity
+    contrastMin = texturaNir.select('min_contrast').divide(100).toInt16() # contrast
+    
+    # print("know all bands ", texturaNir.bandNames().getInfo());  
+    return  image.addBands(savgMin).addBands(dissMin
+                    ).addBands(contrastMin)
+
+def getBandFeatures(imgMosaicYY):
+    bandas_select = ['min','max','stdDev','amp','median','mean', 'min_contrast', 'min_diss', 'min_savg']
+    imgMedian = imgMosaicYY.reduce(ee.Reducer.median()).rename('median')
+    imgMean = imgMosaicYY.reduce(ee.Reducer.mean()).rename('mean')
+    imgMin = imgMosaicYY.reduce(ee.Reducer.min()).rename('min')
+    imgTextura = agregateBandsTexturasGLCM(imgMin)
+    imgMax = imgMosaicYY.reduce(ee.Reducer.max()).rename('max')
+    imgstdDev = imgMosaicYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
+    imgAmp = imgMax.subtract(imgMin).rename('amp')                   
+        
+    imgMosaicYY = imgMosaicYY.addBands(imgMin).addBands(imgMax).addBands(
+                    imgstdDev).addBands(imgAmp).addBands(imgMean
+                        ).addBands(imgMedian).addBands(imgTextura)
+
+    return imgMosaicYY.select(bandas_select)
 
 mapsBiomas = ee.Image(params['assets']['mapbiomas'])
 anoInicial = params['initYear']
@@ -255,7 +297,7 @@ lstBnd = ['min','max','stdDev','amp','median','mean','class']
 lstAllBiomas = ['AMAZONIA','CAATINGA','CERRADO','MATA_ATLANTICA','PAMPA','PANTANAL']
 # lst_Biome = ['MATA_ATLANTICA'] # ,'CERRADO'
 lst_Biome = ['PAMPA','PANTANAL'] #
-biome_act = 'AMAZONIA'
+biome_act = 'CAATINGA'
 cont = 0
 cont = gerenciador(cont, params)
 
@@ -288,11 +330,13 @@ for kkey, lstroi in dictFeitos.items():
     print(f"Bioma => {kkey} wiht {len(lstroi)}")
 
 # sys.exit()
-
+biome_act = 'CAATINGA'
 lst_imgFails = []
-for biome_act in lst_Biome:
+for biome_act in ['CAATINGA']: #lst_Biome
     for wrsP in params['lsPath'][biome_act][:]:   #        
         print( 'WRS_PATH # ' + str(wrsP))
+        print(params['lsGrade'][biome_act][wrsP][:])
+        # sys.exit()
         for wrsR in params['lsGrade'][biome_act][wrsP][:]:   #            
             
             print('WRS_ROW # ' + str(wrsR))
@@ -312,12 +356,13 @@ for biome_act in lst_Biome:
                 if nameROIs not in lstFeatCols:
                     print(f" === loading {nameImg} ====" )
                     imgMosYY = ee.Image(params['assets']['inputAsset'] + "/" + nameImg)     
+                    
                     try:               
                         bandsIm = imgMosYY.bandNames().getInfo()
                         print("bandas iniciais ", bandsIm)
                     except:
                         bandsIm = []
-                    
+                    sys.exit()
                     if len(bandsIm) > 1:                        
                         reMapbiomasYY = mapsBiomas.select('classification_' + str(ano)
                                                 ).remap(params['classMapB'], params['classNew'])    
@@ -325,43 +370,35 @@ for biome_act in lst_Biome:
                         # selecionar as áreas com classes 1 e 2 
                                       
                         if coletaSoil:
-                            maskMapbiomas  = reMapbiomasYY.gt(0)
+                            maskMapbiomas  = reMapbiomasYY.eq(1).focalMin(3).selfMask()
                             imgMosYY = imgMosYY.updateMask(maskMapbiomas)
-                            imgMedian = imgMosYY.reduce(ee.Reducer.median()).rename('median')
-                            imgMean = imgMosYY.reduce(ee.Reducer.mean()).rename('mean')
-                            imgMin = imgMosYY.reduce(ee.Reducer.min()).rename('min')
-                            imgMax = imgMosYY.reduce(ee.Reducer.max()).rename('max')
-                            imgstdDev = imgMosYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
-                            imgAmp = imgMax.subtract(imgMin).rename('amp')                   
+                            imgMosYY =  getBandFeatures(imgMosYY)
                             
                             maskSoil = imgMin.lte(6000)# .multiply(imgMax.lte(9000)).multiply(imgAmp.lte(4000))                            
-                            imgMosYY = imgMosYY.addBands(imgMin).addBands(imgMax).addBands(
-                                                imgstdDev).addBands(imgAmp).addBands(imgMean
-                                                    ).addBands(imgMedian).addBands(
-                                                        reMapbiomasYY.rename('class')).addBands(
+                            imgMosYY = imgMosYY.addBands(reMapbiomasYY.rename('class')).addBands(
                                                             ee.Image.constant(ano).rename('year'))
                         
-                        else:
-                            maskMapbiomas  = reMapbiomasYY.eq(0).focalMin(6).selfMask()
-                            print("******-----****--- REDUCING ---****-----******") 
-                            imgMedian = imgMosYY.reduce(ee.Reducer.median()).rename('median')
-                            imgMean = imgMosYY.reduce(ee.Reducer.mean()).rename('mean')                       
-                            imgMin = imgMosYY.reduce(ee.Reducer.min()).rename('min')
-                            imgMax = imgMosYY.reduce(ee.Reducer.max()).rename('max')
-                            imgstdDev = imgMosYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
-                            imgAmp = imgMax.subtract(imgMin).rename('amp') 
+                        # else:
+                        #     maskMapbiomas  = reMapbiomasYY.eq(0).focalMin(6).selfMask()
+                        #     print("******-----****--- REDUCING ---****-----******") 
+                        #     imgMedian = imgMosYY.reduce(ee.Reducer.median()).rename('median')
+                        #     imgMean = imgMosYY.reduce(ee.Reducer.mean()).rename('mean')                       
+                        #     imgMin = imgMosYY.reduce(ee.Reducer.min()).rename('min')
+                        #     imgMax = imgMosYY.reduce(ee.Reducer.max()).rename('max')
+                        #     imgstdDev = imgMosYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
+                        #     imgAmp = imgMax.subtract(imgMin).rename('amp') 
 
-                            imgMosYY = imgMosYY.addBands(imgMin).addBands(imgMax).addBands(
-                                                imgstdDev).addBands(imgAmp).addBands(imgMean
-                                                    ).addBands(imgMedian).addBands(
-                                                        reMapbiomasYY.rename('class')).addBands(
-                                                            ee.Image.constant(ano).rename('year'))
+                        #     imgMosYY = imgMosYY.addBands(imgMin).addBands(imgMax).addBands(
+                        #                         imgstdDev).addBands(imgAmp).addBands(imgMean
+                        #                             ).addBands(imgMedian).addBands(
+                        #                                 reMapbiomasYY.rename('class')).addBands(
+                        #                                     ee.Image.constant(ano).rename('year'))
 
                         # print("list of bands ", imgMosYY.bandNames().getInfo())
                         # seleciona as áreas de coleta de solo e depois inverte a mask ==> maskMapbiomas.eq(1).eq(0)
-                        imgMosYY = imgMosYY.select(lstBnd).updateMask(maskMapbiomas)
+                        # imgMosYY = imgMosYY.select(lstBnd).updateMask(maskMapbiomas)
                         pmtSample= {
-                            'numPoints': 500,
+                            'numPoints': 100,
                             'classBand': 'class',
                             'region': geomsBounds,                            
                             'scale': 30,                            

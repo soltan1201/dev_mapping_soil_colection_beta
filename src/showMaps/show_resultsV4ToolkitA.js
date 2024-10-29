@@ -4,7 +4,7 @@ var visualizar = {
     'visclassCC': {
             "min": 0, 
             "max": 62,
-            "palette":  palettes.get('classification7'),
+            "palette":  palettes.get('classification9'),
             "format": "png"
     },
     'visMosaic': {
@@ -65,11 +65,10 @@ var ApplyReducers = function (img) {
                 .addBands(img_max).addBands(img_min).select(bndReds);
 }
 var param = {
-    // 'classmapping': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOIL',
-    'classmappingV3': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOILV3',
     'classmappingV4': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOILV4',
     'gradeLandsat': 'projects/mapbiomas-workspace/AUXILIAR/cenas-landsat-v2',
-    'inputAsset': 'projects/mapbiomas-workspace/public/collection8/mapbiomas_collection80_integration_v1',
+    'asset_biomas_raster': 'projects/mapbiomas-workspace/AUXILIAR/biomas-raster-41',
+    'inputAsset': 'projects/mapbiomas-public/assets/brazil/lulc/collection9/mapbiomas_collection90_integration_v1',
     'classMapB' :   [3, 4, 5, 6, 9,12,13,15,18,19,20,21,22,23,24,25,26,29,30,31,32,33,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,62],
     'classNew'  :   [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2],
     'classFlorest': [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
@@ -87,6 +86,22 @@ var dictNameBiome = {
     'Pampa': 'PAMPA',
     'Pantanal': 'PANTANAL'
 };
+var dictNameBiomes = {
+    'Amazônia': 'AMAZONIA', 
+    'Cerrado': 'CERRADO',
+    'Caatinga': 'CAATINGA',
+    'Mata Atlântica': 'MATA_ATLANTICA', 
+    'Pampa': 'PAMPA',
+    'Pantanal': 'PANTANAL'
+};
+var dict_raster = {
+    'Amazônia': 1, 
+    'Cerrado': 4,
+    'Caatinga': 5,
+    'Mata Atlântica': 2, 
+    'Pampa': 6,
+    'Pantanal': 3
+}
 var dictRegions = {
     "Pampa": ['51','52','53'],
     "Cerrado": ['31','32','35','34','33'],
@@ -100,7 +115,7 @@ var MapMosaicL = null;
 var MapMosaicD = null;
 var MapMosHarmL = null;
 var MapMosHarmD = null;
-var MapCol8 = null;
+var MapCol90 = null;
 // var MapFloresta = null;
 var MapMaskAreaNVeg = null;
 var MapSoilBase = null;
@@ -109,64 +124,36 @@ var MaptoExc = null;
 var MaptoAgr = null;
 var MapRegs = null;
 // https://code.earthengine.google.com/f428edf837b2d10b5d78157e0225d113
-var lstRegion = {
-      '51': [-53.08, -31.09],
-      '52': [-53.29, -30.61],
-      '53': [-54.62, -29.42],
-      '31': [-45.12, -6.99],
-      '32': [-45.07, -14.96],
-      '35': [-49.28, -13.27],
-      '34': [-54.76, -14.19],
-      '33': [-50.50, -19.49],
-      '21': [-41.15, -10.85],
-      '22': [-42.06, -7.41],
-      '23': [-38.36, -5.69],
-      '24': [-40.17, -12.21],
-      '60': [-56.66, -18.29],
-      '11': [-66.88, -5.09],
-      '12': [-62.40, 2.64],
-      '13': [-57.88, -0.33],
-      '14': [-51.84, 0.86],
-      '15': [-59.10, -14.85],
-      '16': [-60.12, -8.44],
-      '17': [-55.11, -11.03],
-      '18': [-52.60, -5.94],
-      '19': [-47.08, -3.14],
-      '41': [-42.40, -19.21],
-      '42': [-46.88, -24.57],
-      '44': [-50.53, -22.30],
-      '45': [-38.74, -14.25],
-      '46': [-51.90, -27.75],
-      '47': [-51.32, -25.04]
-};
 
-var region_selected = '35';
 var yyear = 2005;
 var bioma_select = 'Cerrado';
 var visMosaic = true;
 
 var lsAnos = ee.List([
-    1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 
-    1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 
-    2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022
+    "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", 
+    "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012",
+    "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"
   ]);
  
 var colectionYears = lsAnos.map(function(yyear){
-                return ee.Feature(null, {'year': yyear,  'system:yValue': 0});
+                return ee.Feature(null, {'year': yyear,  'system_yValue': 0});
       });  
-colectionYears = ee.FeatureCollection(colectionYears);
+colectionYears = ee.FeatureCollection(colectionYears); //.map(function(feat){ return feat.set('system:yearValue', feat.id())});
 print(" feature ", colectionYears);
 
-var regionss = ee.FeatureCollection(param.regions);     
-var mapbiomasCol8 = ee.Image(param.inputAsset);
-var mapsSoilsV3 = ee.ImageCollection(param.classmappingV3); // camada de base 
+var regionss = ee.FeatureCollection(param['regions']);     
+var mapbiomasCol9 = ee.Image(param.inputAsset);
 var mapsSoilsV4 = ee.ImageCollection(param.classmappingV4); // camada de base 
 
-var mosaicHarms = ee.ImageCollection(param.asset_mosaic);
+var mosaicHarms = ee.ImageCollection(param.asset_mosaic)//.map(function(img){return img.rename('class')});
 print("show mosaic harmonicos the first 5 ", mosaicHarms.limit(5));
+print(mosaicHarms.aggregate_histogram('biome'));
+print(mosaicHarms.aggregate_histogram('year'));
 
 var Mosaicos = ee.ImageCollection(param.assetIm).select(param.bandas);    
-print("Show mosaic Mapbiomas the frist 5 ", Mosaicos.limit(5));
+print("Show mosaic Mapbiomas the first 5 ", Mosaicos.limit(5));
+
+var raster_biome = ee.Image(param['asset_biomas_raster'])
 
 var pstyle ={
     mapleft : {
@@ -196,6 +183,23 @@ var pstyle ={
                 height: '80px',
                 margin: '0px',
                 padding: '0px',
+            },
+    panel_head: {
+                'width': '700px',
+                'height': '70px',
+                'position': 'top-right',
+                // 'backgroundColor': '#cccccc',
+                'margin': '0px 0px 0px 1px',
+            },
+    panel_ploting: {
+                width: '650px',
+                height: "300px",
+                position: 'bottom-right'
+            },
+    labelTitulo : {
+                fontSize: '18px', 
+                fontWeight: 'bold',
+                backgroundColor: '#F5F4F9'
             },
     style_label:  {
                 position: 'bottom-center',
@@ -248,7 +252,7 @@ var pstyle ={
                 }
             }
 };
-
+var regioes;
 var MapLeft = ui.Map(pstyle.mapleft);
 var MapRight = ui.Map(pstyle.mapright);
 MapRight.setOptions('SATELLITE');
@@ -256,53 +260,51 @@ MapLeft.setOptions('SATELLITE');
 
 var Mapeando = function(nyear){
     print(" ==== Processing year = " + nyear.toString());
+    
     MapLeft.clear();
     MapRight.clear();
+    
     print("Mapeando ano " + nyear.toString());
     var bandaActiva  = 'classification_' + nyear.toString();
-    print("region " + region_selected);
-    var regioes = regionss.filter(ee.Filter.eq('region', parseInt(region_selected))).geometry();
+    print("bioma  " + bioma_select);
+    
+    print(" mosaicHarms ", mosaicHarms.size());
+
+    var baseBiomas = raster_biome.eq(dict_raster[bioma_select]);
+    regioes = regionss.filter(ee.Filter.eq('bioma', bioma_select)).geometry();
     
     var mosaicoYyear = Mosaicos.filter(ee.Filter.eq('biome', dictNameBiome[bioma_select]))
-                            .filter(ee.Filter.eq('year', nyear)).median().clip(regioes);
-
-    var mosaicHarmsYyear = mosaicHarms.filterBounds(regioes)
-                                .filter(ee.Filter.eq('year', nyear))
+                            .filter(ee.Filter.eq('year', parseInt(nyear)));
+    print( " mosaicoYyear  ==> ", mosaicoYyear);
+    mosaicoYyear = mosaicoYyear.median().updateMask(baseBiomas);
+    
+    var mosaicHarmsYyear = mosaicHarms.filter(ee.Filter.eq('biome', dictNameBiomes[bioma_select]))
+                                .filter(ee.Filter.eq('year', parseInt(nyear)))
                                 .map(ApplyReducers);    
-                                
-    mosaicHarmsYyear  =  mosaicHarmsYyear.mosaic().clip(regioes);                           
+    print( " mosaicHarmsYyear  ==> ", mosaicHarmsYyear);
+    print( "  ", dictNameBiome[bioma_select]);
+    mosaicHarmsYyear  =  mosaicHarmsYyear.mosaic().updateMask(baseBiomas); 
     
     //Duna 23, Urbano 24, Mining 30
-    var areasIntMapb = mapbiomasCol8.select(bandaActiva)
+    var areasIntMapb = mapbiomasCol9.select(bandaActiva)
                             .remap(param.classMapB, param.classNew)
-                            .clip(regioes);
+                            .updateMask(baseBiomas);
+
     var maskExcluir = areasIntMapb.eq(1);
     var maskAgrop = areasIntMapb.eq(2);
-    // var mapbiomasFlorest = mapbiomas.select(bandaActiva)
-    //                         .remap(param.classMapB, param.classFlorest)
-    //                         .clip(regioes).selfMask();
-    // var mapAfloramento = mapbiomas.select(bandaActiva)
-    //                             .clip(regioes).eq(29).selfMask();    //   
-    // Camada de solo exposto         
-    var maskAreaNVeg = mapbiomasCol8.select(bandaActiva)
-                            .clip(regioes).eq(25).selfMask();
-    var mapsSoilsV3Yyear = mapsSoilsV3.filterBounds(regioes)
-                            .filter(ee.Filter.eq('year', nyear))
-                            .max();//.clip(regioes);
-    print("know number of images maps soil ", mapsSoilsV3Yyear);
-    //
-    // mapsSoilsV2Yyear = mapsSoilsV2Yyear.updateMask(maskExcluir).clip(regioes);
-    print("mapas de solo base version 3", mapsSoilsV3Yyear);    
-    // var maskVersion3 = mapsSoilsV3Yyear.eq(1);                      
-    
-    var mapsSoilsV4Yyear = mapsSoilsV4.filter(ee.Filter.eq('region', region_selected))
-                            .filter(ee.Filter.eq('year', nyear))
-                            .max().gte(0.0);//.clip(regioes);
 
+    // Camada de solo exposto         
+    var maskAreaNVeg = mapbiomasCol9.select(bandaActiva)
+                            .updateMask(baseBiomas).eq(25).selfMask();
+    print(" mapsSoilsV4 by biomes ", mapsSoilsV4.aggregate_histogram('biome'))
+    var mapsSoilsV4Yyear = mapsSoilsV4.filter(ee.Filter.eq('biome', dictNameBiomes[bioma_select]))
+                            .filter(ee.Filter.eq('year', parseInt(nyear)))
+    print(" mapas Soils year ", mapsSoilsV4Yyear);                        
+    mapsSoilsV4Yyear = mapsSoilsV4Yyear.max().gte(0.84).selfMask();
     MapMosaicL = ui.Map.Layer({
                     "eeObject": mosaicoYyear,
                     'visParams': visualizar.visMosaic,
-                    'name': 'Mosaic Col8 ' + nyear.toString(),
+                    'name': 'Mosaic Col9 ' + nyear.toString(),
                     'shown': true,
                     'opacity': 1
                 });
@@ -310,17 +312,11 @@ var Mapeando = function(nyear){
     MapMosaicD = ui.Map.Layer({
                     "eeObject": mosaicoYyear,
                     'visParams': visualizar.visMosaic,
-                    'name': 'Mosaic Col8 ' + nyear.toString(),
+                    'name': 'Mosaic Col9 ' + nyear.toString(),
                     'shown': true,
                     'opacity': 1
                 });
-    // MapFloresta = ui.Map.Layer({
-    //                 "eeObject": mapbiomasFlorest,
-    //                 'visParams': visualizar.floresta,
-    //                 'name': 'Florest Col8 ' + nyear.toString(),
-    //                 'shown': true,
-    //                 'opacity': 1
-    //             });
+
     MapMaskAreaNVeg = ui.Map.Layer({
                     "eeObject": maskAreaNVeg,
                     'visParams': visualizar.areaNVeg,
@@ -345,19 +341,11 @@ var Mapeando = function(nyear){
                 'opacity': 1
                 });
     //            
-    MapCol8 = ui.Map.Layer({
-                "eeObject": areasIntMapb,
+    MapCol90 = ui.Map.Layer({
+                "eeObject": mapbiomasCol9.select(bandaActiva).updateMask(baseBiomas),
                 'visParams': visualizar.visclassCC,
-                'name': "Mapbiomas Col8.0" + nyear.toString(),
+                'name': "Col9.0 y  " + nyear.toString(),
                 'shown': false,
-                'opacity': 1
-                });
-    //
-    MapSoilBase = ui.Map.Layer({
-                "eeObject": mapsSoilsV3Yyear.eq(1).selfMask(),
-                'visParams': visualizar.soilVBase,
-                'name': "mapSoil_V3Base_" + yyear.toString(),
-                'shown': true,
                 'opacity': 1
                 });
 
@@ -368,9 +356,7 @@ var Mapeando = function(nyear){
                 'shown': true,
                 'opacity': 1
                 });
-    
-
-    //
+                ///
     MaptoExc = ui.Map.Layer({
                 "eeObject": maskExcluir.selfMask(),
                 'visParams': visualizar.excluir,
@@ -403,26 +389,21 @@ var Mapeando = function(nyear){
             MapRight.remove(MapMosaicD);
             MapRight.remove(MapMosHarmD);
             MapRight.remove(MaptoExc);
-            MapRight.remove(MapSoilBase);
             MapRight.remove(MapSoilV4);
             MapRight.remove(MaptoAgr);
-            MapLeft.remove(MapCol8);
+            MapLeft.remove(MapCol90);
             MapLeft.remove(MapMosaicL);
             MapLeft.remove(MapMosHarmL);
-            // MapRight.remove(MapFloresta);
             MapRight.remove(MapMaskAreaNVeg);
             // MapFinal.clear()
     }
 
     MapLeft.add(MapMosaicL);
     MapLeft.add(MapMosHarmL);
-    MapLeft.add(MapCol8);
-    //
+    MapLeft.add(MapCol90);
     MapRight.add(MapMosaicD);
     MapRight.add(MapMosHarmD);
-    MapRight.add(MapSoilBase);
     MapRight.add(MapSoilV4);
-    // MapRight.add(MapFloresta);
     MapRight.add(MapMaskAreaNVeg);
     MapRight.add(MaptoExc);
     MapRight.add(MaptoAgr);
@@ -434,7 +415,7 @@ var Mapeando = function(nyear){
 print('Iniciando Rotina no Cerrado...🔥🔥' );
 Mapeando(yyear);
 var barra_year = ui.Chart.feature.byFeature(
-                    colectionYears, 'year', 'system:yValue')
+                    colectionYears, 'year', 'system_yValue')
                     .setChartType('LineChart')
                     .setOptions(pstyle.barra_options);
     
@@ -451,9 +432,108 @@ barra_year.onClick(function (xValue, yValue, seriesName) {
     yyear = xValue;
     print("selecionado o ano ===> " + xValue)
     Mapeando(yyear);
+    MapRight.add(panelPlot);
+    MapRight.onClick(run_plot_Serie);
+    MapLeft.onClick(run_plot_Serie);
 });
+
+function format_image(img){
+    var nband = ee.Algorithms.String(ee.List(img.bandNames()).get(0));
+    var lname = nband.length();
+    var yyear = ee.Number.parse(nband.slice(ee.Number(lname).subtract(8), ee.Number(lname).subtract(4)));
+    var mmonth = ee.Number.parse(nband.slice(ee.Number(lname).subtract(4), ee.Number(lname).subtract(2)));
+    var dday = ee.Number.parse(nband.slice(ee.Number(lname).subtract(2), ee.Number(lname)));
+    var dataImg = ee.Date.fromYMD(yyear, mmonth, dday);
+    return ee.Image(img).rename('class').set('system:time_start', dataImg);
+}
+
+function format_image_Collection_fromBands(images){
+    var redBnds = ee.List(images.bandNames());    
+    var lstIterImg = redBnds.iterate(
+                      function(itmbnd, mylist){
+                          var img = ee.Image(images).select([itmbnd]);
+                          var lname = ee.Algorithms.String(itmbnd).length();
+                          var subStringbnd = ee.String(itmbnd).slice(ee.Number(lname).subtract(2), ee.Number(lname).subtract(1))
+                          var lstUpdate = ee.Algorithms.If( 
+                                          ee.Algorithms.IsEqual(subStringbnd.compareTo(ee.Algorithms.String('_')), 0),
+                                          ee.List(mylist),
+                                          ee.List(mylist).add(format_image(img))
+                                      )
+                          return lstUpdate;
+                      },
+                      ee.List([])
+                  )
+    return ee.ImageCollection(lstIterImg)
+}
+
     
+function  run_plot_Serie (coords) {
+    // Update the lon/lat panel with values from the click event.
+    lon.setValue('lon: ' + coords.lon.toFixed(2)),
+    lat.setValue('lat: ' + coords.lat.toFixed(2));
+
+    // Add a red dot for the point clicked on.
+    var point = ee.Geometry.Point(coords.lon, coords.lat);
+    var dot = ui.Map.Layer(point, {color: 'FF0000'}, 'point_clicked');
+    MapRight.layers().set(7, dot); // colocar o ponto no local certo      
+    // MapLeft.layers().set(1, dot);
+    ////////////////////////////////////////////////////////////////////////////////
+    // Plot the fitted model and the original data at the ROI- Modis.
+    var mosaicHarmspto = mosaicHarms.filterBounds(point);
+    print(" newlstndfi ", mosaicHarmspto);
+
+
+    var newlstndfi = ee.List(mosaicHarmspto.toList(mosaicHarmspto.size()));
+    var lstBndNDFI = newlstndfi.iterate( 
+            function(item, mylist){
+                var imtmp = ee.Image(item);
+                var lsttemp = ee.Algorithms.If(
+                    ee.Algorithms.IsEqual(ee.Number(ee.List(imtmp.bandNames()).size()).eq(1), 1),
+                    ee.List(mylist).add(format_image(imtmp)),
+                    ee.List(mylist).cat(format_image_Collection_fromBands(imtmp))
+                )
+                return lsttemp;
+            },
+            ee.List([])
+        )
+    print("Lista de imagens formatadas ", ee.ImageCollection.fromImages(lstBndNDFI));
+    var indChartHarmonic= ui.Chart.image.series(
+                ee.ImageCollection.fromImages(lstBndNDFI), point, ee.Reducer.first(), 30)
+                // .setSeriesNames([ indexAnalise, 'estimado'])
+                .setOptions({
+                      colors: ['#8d5959'],
+                      pointShape: 'diamond',
+                      lineWidth: 1,
+                      pointSize: 3,
+                });
+    panelPlot.widgets().set(2, indChartHarmonic);   
     
+    var lstImgMaps = lsAnos.iterate(
+                        function(nyear, mylist){
+                            // print(nyear);
+                            var imgYY = mapbiomasCol9.select(ee.String('classification_').cat(nyear));
+                            // print("imagem year ", imgYY)
+                            var dateYY = ee.Date.fromYMD(ee.Number.parse(nyear), 1,1);
+                            mylist = ee.List(mylist).add(imgYY.rename('class').set('system:time_start', dateYY));
+                            return mylist;
+                        }, ee.List([]))
+
+    var chartmapUsos = ui.Chart.image.series(
+                ee.ImageCollection.fromImages(lstImgMaps), point, ee.Reducer.first(), 30)
+                .setOptions({
+                    colors: ['#ffb961'], //palettes.get('classification8'),
+                    pointShape: 'diamond',
+                    lineWidth: 1,
+                    pointSize: 3,
+                    backgroundColor: '#05313d',
+              });
+    panelPlot.widgets().set(3, chartmapUsos); 
+
+}
+
+MapRight.onClick(run_plot_Serie);
+MapLeft.onClick(run_plot_Serie);
+
 var panel = ui.Panel([barra_year],
     ui.Panel.Layout.Flow('vertical'), pstyle.stretchp);
 
@@ -464,48 +544,41 @@ var seletor_Bioma = ui.Select({
     onChange: function(nbiome){
         bioma_select = nbiome;
         print("selecionado o Bioma ===> " + nbiome);
-        var lstReg = dictRegions[bioma_select];
-        seletor_reg.items().reset(lstReg);
-                    
-        // Set the first band to the selected band.
-        seletor_reg.setValue(seletor_reg.items().get(0));
     }
 })
 // Set a place holder.
 seletor_Bioma.setPlaceholder('Biome Choosed Cerrado...');
-
-
-var seletor_reg = ui.Select({
-    items: dictRegions[bioma_select],
-    onChange: function(nregion){
-        region_selected = nregion;
-        print("selecionada a Região ===> " + nregion);
-        MapRight.setCenter(lstRegion[region_selected][0], lstRegion[region_selected][1], 12)
-    }
-})
-// Set a place holder.
-seletor_reg.setPlaceholder('Region Choosed 35...');
 seletor_Bioma.style().set(pstyle.selector);
-seletor_reg.style().set(pstyle.selector);
 
 label_ini.style().set(pstyle.style_label);
 label_fin.style().set(pstyle.style_label);
 
-// MapRight.addLayer(ee.Image().select(), {}, "Mosaic Col8'");
-// MapRight.addLayer(ee.Image().select(), {}, "MosaicHarm");
-// MapRight.addLayer(ee.Image().select(), {}, "mapSoil_V2 ");
-// MapRight.addLayer(ee.Image().select(), {}, "AreaExcluirNotVeg");
-// MapRight.addLayer(ee.Image().select(), {}, "AreaAgropecuaria");
-// MapRight.addLayer(ee.Image().select(), {}, "Regions");
-// //
-// MapLeft.addLayer(ee.Image().select(), {}, "Mosaic Col8'");
-// MapLeft.addLayer(ee.Image().select(), {}, "MosaicHarm");
-// MapLeft.addLayer(ee.Image().select(), {}, "Mapbiomas Col7.1");
+// Create a panel to hold our widgets.
+var panelPlot = ui.Panel();
+panelPlot.style().set(pstyle.panel_ploting);
 
 
+// Create an intro panel with labels.
+var titulo =  ui.Label({
+    value: 'Sistem of classification of fire',
+    style: pstyle.labelTitulo
+})
+
+var accion = ui.Label(' (Click into map to inpects) ')
+var panelHead = ui.Panel({
+    layout: ui.Panel.Layout.flow('horizontal'),
+    style: pstyle.panel_head
+});
+panelHead.add(titulo);
+panelHead.add(accion);
+panelPlot.add(panelHead);
+var lon = ui.Label();
+var lat = ui.Label();
+panelPlot.add(ui.Panel([lon, lat], ui.Panel.Layout.flow('horizontal')));
 
 var Maplincados = ui.Map.Linker([MapLeft, MapRight]);
-MapRight.setCenter(-60.354, -7.942, 8)
+MapRight.centerObject(regioes, 8)
+MapRight.add(panelPlot)
 var compPanel = ui.SplitPanel({
     firstPanel: Maplincados.get(0),
     secondPanel: Maplincados.get(1),
@@ -516,17 +589,17 @@ var compPanel = ui.SplitPanel({
     }
 });
 
-
 var panel0 = ui.Panel(
         [compPanel],
-        ui.Panel.Layout.Flow('vertical', true), pstyle.stretchp
+        ui.Panel.Layout.Flow('vertical', true), 
+        pstyle.stretchp
     );
 
 var panel_region = ui.Panel(
-        [label_ini, seletor_Bioma, seletor_reg, label_fin],
+        [label_ini, seletor_Bioma, label_fin],
         ui.Panel.Layout.Flow('horizontal'), {
             border: '2px solid black',
-            height: '50px',
+            height: '30px',
         }
     )
 var panel_parametro = ui.Panel([panel_region],

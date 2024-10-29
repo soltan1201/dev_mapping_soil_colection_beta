@@ -1,5 +1,6 @@
 #-*- coding utf-8 -*-
 import ee
+import os
 import gee #as gee
 import sys
 import json
@@ -8,9 +9,15 @@ import math
 import copy
 from datetime import date
 
-# import arqParametros as aparam
+from pathlib import Path
+pathparent = str(Path(os.getcwd()).parents[0])
+sys.path.append(pathparent)
+from configure_account_projects_ee import get_current_account, get_project_from_account
+projAccount = get_current_account()
+print(f"projetos selecionado >>> {projAccount} <<<")
+
 try:
-    ee.Initialize()
+    ee.Initialize(project= projAccount)
     print('The Earth Engine package initialized successfully!')
 except ee.EEException as e:
     print('The Earth Engine package failed to initialize!')
@@ -100,7 +107,7 @@ class ClassMosaics(object):
         self.biomeActivo = biomeActivo ## .buffer(buffer)
         # building list of dependents and independent variables
         self.bluidingVariabel()        
-        print(f"\n================ BIOMA ACTIVO {} ===========================")
+        print(f"\n================ BIOMA ACTIVO {biomeActivo} ===========================")
         self.geomet = ee.FeatureCollection(self.options['assets']['gradeLandsat']).filter(
                                 ee.Filter.eq('PATH', int(wrsPath))).filter(
                                     ee.Filter.eq('ROW', int(wrsRow))).geometry()
@@ -268,10 +275,10 @@ class ClassMosaics(object):
 
         ss = 'L8'
         if year > 2012:
-            if year in [2022]:
-                ss = "L9"
-            else:
-                ss = 'L8'
+            # if year in [2022]:
+            #     ss = "L9"
+            # else:
+            ss = 'L8'
         elif year in [2000,2001,2002, 2012]:
             ss = "L7"        
         else :
@@ -429,11 +436,11 @@ class ClassMosaics(object):
 
         return image.addBands(varfitted).select('fitted')# .addBands(erro)
                         
-    def setImgfittedNDFIAonWindows5(self):
+    def setImgfittedNDFIAonWindows5(self, year_min):
 
-        lsAnos = [k for k in range(self.options['initYear'], self.options['endYear'])]
-        # print(lsAnos)
-
+        lsAnos = [k for k in range(self.options['initYear'], self.options['endYear'] + 1)]
+        print(lsAnos)
+        # sys.exit()
         print("sabendo todas as janelas : ")
         lsWindowYear = self.janelasAnos(lsAnos, False)
         print(self.harmonicLandsat.size().getInfo())
@@ -441,8 +448,9 @@ class ClassMosaics(object):
         
         for cc, yyear in enumerate(lsAnos):
 
-            if str(yyear) in self.lstYYearsFails:
-                # print("   AQUIIII    ")    
+            # if str(yyear) in self.lstYYearsFails:
+            if int(yyear) > year_min:
+                print("   AQUIIII    ")    
 
                 # Get mean of time series
                 janelaYear = lsWindowYear[cc]
@@ -664,7 +672,7 @@ params = {
             '226' : ['57','58','59','60','61','62','63','64','65','66','67','68','69'],			
             '227' : ['58','59','60','61','62','63','64','65','66','67','68','69','70','71','72'],
             '228' : ['58','59','60','61','62','63','64','65','66','67','68','69','70','71'],		
-            '229' : ['58','59','60','61','62','63','64','65','66','67','68','69','70','71'], # 
+            '229' : ['68','69','70','71'], # '58','59','60','61','62','63','64','65','66','67',
             '230' : ['59','60','61','62','63','64','65','66','67','68','69'],								
             '231' : ['57','58','59','60','61','62','63','64','65','66','67','68','69'],			
             '232' : ['57','58','59','60','61','62','63','64','65','66','67','68','69'],	# '56',	
@@ -725,7 +733,7 @@ params = {
         }
     }, # 
     'lsPath' : {
-        'AMAZONIA' : ['1','2','3','4','5','6','220','221','222','223','224','225','226','227','228','229','230','231','232','233'],  # 
+        'AMAZONIA' : ['229','230','231','232','233'],  # '1','2','3','4','5','6','220','221','222','223','224','225','226','227','228',
         'CAATINGA' : ['214','215','216','217','218','219','220'],
         'CERRADO': ['217','218','219','220','221','222','223','224','225','226','227','228','229','230'], # 
         'MATA_ATLANTICA':['214','215','216','217','218','219','220','221','222','223','224','225'], # 
@@ -752,7 +760,7 @@ params = {
     'harmonics': 2,
     'dateInit': '1987-01-01',
     'numeroTask': 3,
-    'numeroLimit': 35,
+    'numeroLimit': 60,
     'conta' : {
         '0': 'caatinga01',
         '5': 'caatinga02',
@@ -760,7 +768,7 @@ params = {
         '15': 'caatinga04',
         '20': 'caatinga05',        
         '25': 'solkan1201',
-        '30': 'diegoGmail',      
+        '30': 'superconta',      
     },
 }
 
@@ -777,7 +785,12 @@ def gerenciador(cont, paramet):
 
         print("conta ativa >> {} <<".format(paramet['conta'][str(cont)]))        
         gee.switch_user(paramet['conta'][str(cont)])
-        gee.init()        
+        projAccount = get_project_from_account(paramet['conta'][str(cont)])
+        try:
+            ee.Initialize(project= projAccount) # project='ee-cartassol'
+            print('The Earth Engine package initialized successfully!')
+        except ee.EEException as e:
+            print('The Earth Engine package failed to initialize!')      
         gee.tasks(n= paramet['numeroTask'], return_list= True)        
     
     elif cont > paramet['numeroLimit']:
@@ -802,7 +815,7 @@ arqFeitos = open("registros/orbtilesAnosNew.txt", 'w+')
 arqtoSaved = 0
 cont = 0
 # 'AMAZONIA','CAATINGA','CERRADO','MATA_ATLANTICA','PAMPA','PANTANAL'
-biome_act = 'AMAZONIA'
+biome_act = 'CAATINGA'
 dictYYFaits = {}
 # Opening JSON file
 with open('list_imageMosaic_failTosave.json') as json_file:
@@ -826,24 +839,25 @@ with open('list_imageMosaic_failTosave.json') as json_file:
         dictYYFaits[kkey] = dict_tmp
 
 # sys.exit()
+apartirYear = 2019
 dictAnosFalt = dictYYFaits[biome_act]
 lstkeysPathRow = [kk for kk in dictAnosFalt.keys()]
 for wrsP in params['lsPath'][biome_act][:]:   #    
     print( 'WRS_PATH # ' + str(wrsP))
     for wrsR in params['lsGrade'][biome_act][wrsP]:   #    
-        # cont = gerenciador(cont, params)    
+        cont = gerenciador(cont, params)    
         print('WRS_ROW # ' + str(wrsR))
         keyPathRow =  wrsP + '_' + wrsR
-        if keyPathRow in lstkeysPathRow:
-            print("lista de anos que faltam ", dictAnosFalt[keyPathRow])        
-            # print(geoms.getInfo())
+        # if keyPathRow in lstkeysPathRow:
+        # print("lista de anos que faltam ", dictAnosFalt[keyPathRow])        
+        # print(geoms.getInfo())
 
-            myclassMosaico = ClassMosaics(biome_act, wrsP, wrsR, dictAnosFalt[keyPathRow]) # 
-            myclassMosaico.setImgfittedNDFIAonWindows5()
-            # sys.exit()
-                # janFeita = False     
-                # 
-            arqFeitos.write(keyPathRow + '\n')   
+        myclassMosaico = ClassMosaics(biome_act, wrsP, wrsR, []) # dictAnosFalt[keyPathRow]
+        myclassMosaico.setImgfittedNDFIAonWindows5(apartirYear)
+        # sys.exit()
+            # janFeita = False     
+            # 
+        arqFeitos.write(keyPathRow + '\n')   
         
 
 arqFeitos.close()

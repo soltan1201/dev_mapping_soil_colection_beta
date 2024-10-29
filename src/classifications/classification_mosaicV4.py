@@ -1,5 +1,6 @@
 #-*- coding utf-8 -*-
 import ee
+import os
 import gee
 import sys
 import random
@@ -7,9 +8,15 @@ import json
 import collections
 collections.Callable = collections.abc.Callable
 from tqdm import tqdm
+from pathlib import Path
+pathparent = str(Path(os.getcwd()).parents[0])
+sys.path.append(pathparent)
+from configure_account_projects_ee import get_current_account, get_project_from_account
+projAccount = get_current_account()
+print(f"projetos selecionado >>> {projAccount} <<<")
 
 try:
-    ee.Initialize()
+    ee.Initialize(project= projAccount)
     print('The Earth Engine package initialized successfully!')
 except ee.EEException as e:
     print('The Earth Engine package failed to initialize!')
@@ -169,7 +176,12 @@ def gerenciador(cont, paramet):
 
         print("conta ativa >> {} <<".format(paramet['conta'][str(cont)]))        
         gee.switch_user(paramet['conta'][str(cont)])
-        gee.init()        
+        projAccount = get_project_from_account(paramet['conta'][str(cont)])
+        try:
+            ee.Initialize(project= projAccount) # project='ee-cartassol'
+            print('The Earth Engine package initialized successfully!')
+        except ee.EEException as e:
+            print('The Earth Engine package failed to initialize!')     
         gee.tasks(n= paramet['numeroTask'], return_list= True)        
     
     elif cont > paramet['numeroLimit']:
@@ -180,9 +192,10 @@ def gerenciador(cont, paramet):
 def GetSHPsfromVizinhos(vizinhosName, myGeom, mYear, nameBioma):
 
     ColectionPtos = ee.FeatureCollection([]);
+    print(params['folder_rois'])
     for idpathRow in tqdm(vizinhosName):         
         nameROIs = "rois_fitted_image_" + nameBioma + "_" + str(mYear) + "_" + idpathRow
-        # print("nome ==> " + nameROIs)
+        print("nome ==> " + nameROIs)
         # print(params['folder_rois'] + "/" + nameROIs)
         # "rois_fitted_image_PANTANAL_1995_227_74_Soil"
 
@@ -291,7 +304,8 @@ with open('dict_PathRow_toReviewer.json') as json_file:
 exportROIs = True
 numfeat = 5
 
-lsAnos = [k for k in range(params['initYear'], params['endYear'])]
+lsAnos = [k for k in range(params['initYear'], params['endYear'] + 1)]
+lsAnos = [2023]
 print(lsAnos)
 gradeLandsat = ee.FeatureCollection(params['assets']['gradeLandsat'])
 coletaSoil = True
@@ -300,7 +314,7 @@ dictPath = {}
 lstBnd = ['min','max','stdDev','amp','median','mean','class']
 bandas_imports = ['min','max','stdDev','amp','median','mean']
 # 'AMAZONIA','CAATINGA','CERRADO','MATA_ATLANTICA','PAMPA','PANTANAL'
-biome_act = 'CERRADO'
+biome_act = 'CAATINGA'
 cont = 0
 cont = gerenciador(cont, params)
 
@@ -332,10 +346,13 @@ for wrsP in params['lsPath'][biome_act][:]:   #
 
         for index, ano in enumerate(lsAnos):            
             print("==== ano {} : {} ====".format(index, ano))
-            ROIs_Viz = GetSHPsfromVizinhos(lstOrbViz, geoms, ano, biome_act)
+            if ano < params['endYear']:
+                ROIs_Viz = GetSHPsfromVizinhos(lstOrbViz, geoms, ano, biome_act)
+            else:
+                ROIs_Viz = GetSHPsfromVizinhos(lstOrbViz, geoms, 2022, biome_act)
             sizeROIs = ee.FeatureCollection(ROIs_Viz).size().getInfo()
             print("==============first size conditions = ", sizeROIs)
-
+            exit()
             if sizeROIs == 0:
                 lst_Viz = []
                 for cc,nviz in enumerate(lstOrbViz):
@@ -354,12 +371,12 @@ for wrsP in params['lsPath'][biome_act][:]:   #
             ROIsManual = getPointsfromFolderManual(nameROIsManual)
             sizeROIsM = ROIsManual.size().getInfo()
             print("size ROIS manual = ", sizeROIsM)
-
+            nameExport = 'classSoil_' + biome_act + "_" + str(ano) + '_' + wrsP + '_' + wrsR + 'V' + params['version'] 
             if sizeROIs > 0:
                 print("  =>  ", ROIs_Viz.aggregate_histogram('class').getInfo())  
                 
                 nameSaved = 'fitted_image_' + biome_act + "_" + str(ano) + '_' + wrsP + '_' + wrsR
-                nameExport = 'classSoil_' + biome_act + "_" + str(ano) + '_' + wrsP + '_' + wrsR + 'V' + params['version'] 
+                
 
                 if sizeROIsM > 0:
                     ROIs_Viz = ROIs_Viz.merge(ROIsManual)               
