@@ -97,7 +97,7 @@ var INDEX_PARAMS = ee.Dictionary({
     'cloud': [0.90, 0.96, 0.80, 0.78, 0.72, 0.65],
 });
 
-var GET_NDFIA = function GET_INDEX(COLLECTION, INDEX_PARAMS) {
+function GET_NDFIA (COLLECTION, INDEX_PARAMS) {
 
     return COLLECTION.map(function (IMAGE) {
 
@@ -151,9 +151,8 @@ var TIME_SEQUENCE = ee.List.sequence(ano, ano).map(function FITTED_NDFIa_IMAGE_Y
 
     var GRID_FITTED = GRID.map(function FITTED_NDFIa_IMAGE(FEATURE) {
 
-        var BEFORE_DATE = ee.Date.fromYMD(YEAR.subtract(2), 01, 01)
-        var AFTER_DATE = ee.Date.fromYMD(YEAR.add(2), 12, 31)
-
+        var BEFORE_DATE = ee.Date.fromYMD(YEAR.subtract(2), 1, 1);
+        var AFTER_DATE = ee.Date.fromYMD(YEAR.add(2), 12, 31);
 
         var COLECTION_L8 = ee.ImageCollection(GENERAL_PARAMS.COL_L8)
             .filterBounds(FEATURE.centroid().geometry())
@@ -325,15 +324,15 @@ for (var i = 0; i < size; i++) {
     var region = geometry2
     
     Export.image.toAsset({
-      image: img.toInt16(),
-      description: test.toString(),
-      assetId: id,
-      region: region,
-      scale: 30,
-      maxPixels: 1e13,
-      pyramidingPolicy: 'MODE'
+        image: img.toInt16(),
+        description: test.toString(),
+        assetId: id,
+        region: region,
+        scale: 30,
+        maxPixels: 1e13,
+        pyramidingPolicy: 'MODE'
     })
-  }
+}
 
 
 

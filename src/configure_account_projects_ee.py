@@ -25,7 +25,7 @@ def get_current_account():
     currentAccount = currentAccount[:-1]
     print(f" The correntAccount >>> {currentAccount} <<< ")
 
-    return dictProjAccount[currentAccount]
+    return currentAccount, dictProjAccount[currentAccount]
 
 def get_project_from_account(myaccoun):
     return dictProjAccount[myaccoun]

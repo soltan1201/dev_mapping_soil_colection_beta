@@ -92,9 +92,9 @@ params = {
         'gradeLandsat': 'projects/mapbiomas-workspace/AUXILIAR/cenas-landsat-v2',  # SPRNOME: 247/84
         'inputAsset': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/mosaics-harmonico',     
         'biomas': "users/SEEGMapBiomas/bioma_1milhao_uf2015_250mil_IBGE_geo_v4_revisao_pampa_lagoas",   
-        'mapbiomas': 'projects/mapbiomas-workspace/public/collection8/mapbiomas_collection80_integration_v1',
+        'mapbiomas': 'projects/mapbiomas-public/assets/brazil/lulc/collection9/mapbiomas_collection90_integration_v1',
         'inputROIsSoil': {'id':'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoilB'},
-        'inputROIsVeg': {'id':'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsVeg2'}
+        'inputROIsVeg': {'id':'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsVegB'}
     },
     'classMapB' : [3, 4, 5, 6, 9,12,13,15,18,19,20,21,22,23,24,25,26,29,30,31,32,33,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,62],
     'classNewAg': [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2],
@@ -139,7 +139,7 @@ params = {
         },          
         'CAATINGA' : {
             '214' : ['64', '65', '66', '67'],
-            '215' : ['63', '64', '65', '66', '67', '68'],
+            '215' : [ '67', '68'], #'63', '64', '65', '66',
             '216' : ['63', '64', '65', '66', '67', '68', '69', '70'],
             '217' : ['62', '63', '64', '65', '66', '67', '68', '69', '70', '71'],
             '218' : ['62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72'],
@@ -193,7 +193,7 @@ params = {
     }, # 
     'lsPath' : {
         'AMAZONIA' : ['4','5','6','220','221','222','223','224','225','226','227','228','229','230','231','232','233'], # '1','2','3',
-        'CAATINGA' : ['214','215','216','217','218','219','220'],
+        'CAATINGA' : ['215','216','217','218','219','220'], #'214',
         'CERRADO': ['217','218','219','220','221','222','223','224','225','226','227','228','229','230'], # 
         'MATA_ATLANTICA':['214','215','216','217','218','219','220','221','222','223','224','225'], # 
         'PAMPA':['220','221','222','223','224','225'], #
@@ -285,11 +285,12 @@ def getBandFeatures(imgMosaicYY):
     return imgMosaicYY.select(bandas_select)
 
 mapsBiomas = ee.Image(params['assets']['mapbiomas'])
+# print("list bands Mapbiomas ", mapsBiomas.bandNames().getInfo())
 anoInicial = params['initYear']
 lsAnos = [k for k in range(params['initYear'], params['endYear'])]
 print(lsAnos)
 gradeLandsat = ee.FeatureCollection(params['assets']['gradeLandsat'])
-coletaSoil = False
+coletaSoil = True
 # imgColmosaic = ee.ImageCollection(params['assets']['inputAsset'])
 dictPath = {}
 lstBnd = ['min','max','stdDev','amp','median','mean','class']
@@ -299,7 +300,7 @@ lstAllBiomas = ['AMAZONIA','CAATINGA','CERRADO','MATA_ATLANTICA','PAMPA','PANTAN
 lst_Biome = ['PAMPA','PANTANAL'] #
 biome_act = 'CAATINGA'
 cont = 0
-cont = gerenciador(cont, params)
+# cont = gerenciador(cont, params)
 
 if coletaSoil:
     folderAssetROIs = params['assets']['inputROIsSoil']
@@ -348,7 +349,7 @@ for biome_act in ['CAATINGA']: #lst_Biome
             geomsBounds = geomsBounds.geometry() 
 
             # recMapbiomas = mapsBiomas.clip(geoms)
-            for index, ano in enumerate(lsAnos):
+            for index, ano in enumerate(lsAnos[2:]):
 
                 nameROIs = 'rois_fitted_image_' + biome_act + '_' + str(ano) + '_' + wrsP + '_' + wrsR
                 nameImg = 'fitted_image_' + biome_act + '_' + str(ano) + '_' + wrsP + '_' + wrsR
@@ -356,17 +357,17 @@ for biome_act in ['CAATINGA']: #lst_Biome
                 if nameROIs not in lstFeatCols:
                     print(f" === loading {nameImg} ====" )
                     imgMosYY = ee.Image(params['assets']['inputAsset'] + "/" + nameImg)     
-                    
+
                     try:               
                         bandsIm = imgMosYY.bandNames().getInfo()
                         print("bandas iniciais ", bandsIm)
                     except:
                         bandsIm = []
-                    sys.exit()
+                    # sys.exit()
                     if len(bandsIm) > 1:                        
                         reMapbiomasYY = mapsBiomas.select('classification_' + str(ano)
                                                 ).remap(params['classMapB'], params['classNew'])    
-                        
+                        bandClass = reMapbiomasYY.eq(1).rename('class')
                         # selecionar as áreas com classes 1 e 2 
                                       
                         if coletaSoil:
@@ -374,25 +375,22 @@ for biome_act in ['CAATINGA']: #lst_Biome
                             imgMosYY = imgMosYY.updateMask(maskMapbiomas)
                             imgMosYY =  getBandFeatures(imgMosYY)
                             
-                            maskSoil = imgMin.lte(6000)# .multiply(imgMax.lte(9000)).multiply(imgAmp.lte(4000))                            
-                            imgMosYY = imgMosYY.addBands(reMapbiomasYY.rename('class')).addBands(
-                                                            ee.Image.constant(ano).rename('year'))
-                        
-                        # else:
-                        #     maskMapbiomas  = reMapbiomasYY.eq(0).focalMin(6).selfMask()
-                        #     print("******-----****--- REDUCING ---****-----******") 
-                        #     imgMedian = imgMosYY.reduce(ee.Reducer.median()).rename('median')
-                        #     imgMean = imgMosYY.reduce(ee.Reducer.mean()).rename('mean')                       
-                        #     imgMin = imgMosYY.reduce(ee.Reducer.min()).rename('min')
-                        #     imgMax = imgMosYY.reduce(ee.Reducer.max()).rename('max')
-                        #     imgstdDev = imgMosYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
-                        #     imgAmp = imgMax.subtract(imgMin).rename('amp') 
-
-                        #     imgMosYY = imgMosYY.addBands(imgMin).addBands(imgMax).addBands(
-                        #                         imgstdDev).addBands(imgAmp).addBands(imgMean
-                        #                             ).addBands(imgMedian).addBands(
-                        #                                 reMapbiomasYY.rename('class')).addBands(
-                        #                                     ee.Image.constant(ano).rename('year'))
+                            # maskSoil = imgMin.lte(6000)# .multiply(imgMax.lte(9000)).multiply(imgAmp.lte(4000))                            
+                            imgMosYY = (imgMosYY.addBands(bandClass)
+                                                .addBands(ee.Image.constant(ano).rename('year'))
+                                        )
+                            print("band list colllect ", imgMosYY.bandNames().getInfo())
+                            imgMosYY = imgMosYY.updateMask(maskMapbiomas)
+                            # sys.exit()
+                        else:
+                            maskMapbiomas  = reMapbiomasYY.eq(0).focalMin(3).selfMask()
+                            # 
+                            imgMosYY =  getBandFeatures(imgMosYY)
+                            imgMosYY = (imgMosYY.addBands(ee.Image.constant(0).rename('class'))
+                                                .addBands(ee.Image.constant(ano).rename('year'))
+                                    )
+                            imgMosYY = imgMosYY.updateMask(maskMapbiomas)
+                            print("band list colllect ", imgMosYY.bandNames().getInfo())
 
                         # print("list of bands ", imgMosYY.bandNames().getInfo())
                         # seleciona as áreas de coleta de solo e depois inverte a mask ==> maskMapbiomas.eq(1).eq(0)

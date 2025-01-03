@@ -33,8 +33,8 @@ params = {
         'region': 'users/geomapeamentoipam/AUXILIAR/regioes_biomas_col2',
         'outputAsset': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOILV3'
     },
-    'folder_rois': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoil',   
-    'folder_roiVeg': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsVeg2',
+    'folder_rois': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoilB',   
+    'folder_roiVeg': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsVegB',
     'folder_rois_manual': {'id': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsManualSoilPtos'},
     'lsGrade' : {
         'AMAZONIA' :{
@@ -136,7 +136,7 @@ params = {
     'initYear': 1985,
     'endYear': 2023,
     'numeroTask': 3,
-    'numeroLimit': 70,
+    'numeroLimit': 100,
     'version': '3',
     'pmtGTB': {
         'numberOfTrees': 10, 
@@ -146,14 +146,13 @@ params = {
         'seed': 0
     },
     'conta' : {
-        # '0': 'caatinga01',
-        '0': 'superconta',
-        '40': 'caatinga02',
-        # '50': 'caatinga03',
-        '60': 'caatinga04',
-        '50': 'caatinga05',        
-        '60': 'solkan1201',
-        # '90': 'diegoGmail',      
+        '0': 'caatinga01',
+        '10': 'caatinga02',
+        '20': 'caatinga03',
+        '30': 'caatinga04',
+        '40': 'caatinga05',        
+        '50': 'solkan1201',
+        '60': 'superconta',      
     },
 }
 dictNameBiome = {
@@ -200,8 +199,12 @@ def GetSHPsfromVizinhos(vizinhosName, myGeom, mYear, nameBioma):
         # "rois_fitted_image_PANTANAL_1995_227_74_Soil"
 
         try:
+            print("load feat Soil")
             FeatTemp = ee.FeatureCollection(params['folder_rois'] + "/" + nameROIs)#  
+            print("passo")
+            print(FeatTemp.first().getInfo())
             sizeFeat =  FeatTemp.size().getInfo()
+            print(" size ", sizeFeat)
         except:
             sizeFeat = 0
 
@@ -254,20 +257,35 @@ def getRegion_fromCena(dictReg, idCena):
 
     return lstReg[0]
 
-def getBandFeatures(imgMosYY):
-    bandas_select = ['min','max','stdDev','amp','median','mean']
-    imgMedian = imgMosYY.reduce(ee.Reducer.median()).rename('median')
-    imgMean = imgMosYY.reduce(ee.Reducer.mean()).rename('mean')
-    imgMin = imgMosYY.reduce(ee.Reducer.min()).rename('min')
-    imgMax = imgMosYY.reduce(ee.Reducer.max()).rename('max')
-    imgstdDev = imgMosYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
+def agregateBandsTexturasGLCM (image):
+    
+    print("processing agregateBandsTexturasGLCM")        
+    img = ee.Image(image).toInt32();                
+
+    texturaNir = img.select('min').glcmTexture(3)  
+    savgMin = texturaNir.select('min_savg').divide(10).toInt16()  # promedio
+    dissMin = texturaNir.select('min_diss').toInt16()  # dissimilarity
+    contrastMin = texturaNir.select('min_contrast').divide(100).toInt16() # contrast
+    
+    # print("know all bands ", texturaNir.bandNames().getInfo());  
+    return  image.addBands(savgMin).addBands(dissMin
+                    ).addBands(contrastMin)
+
+def getBandFeatures(imgMosaicYY):
+    bandas_select = ['min','max','stdDev','amp','median','mean', 'min_contrast', 'min_diss', 'min_savg']
+    imgMedian = imgMosaicYY.reduce(ee.Reducer.median()).rename('median')
+    imgMean = imgMosaicYY.reduce(ee.Reducer.mean()).rename('mean')
+    imgMin = imgMosaicYY.reduce(ee.Reducer.min()).rename('min')
+    imgTextura = agregateBandsTexturasGLCM(imgMin)
+    imgMax = imgMosaicYY.reduce(ee.Reducer.max()).rename('max')
+    imgstdDev = imgMosaicYY.reduce(ee.Reducer.stdDev()).rename('stdDev')
     imgAmp = imgMax.subtract(imgMin).rename('amp')                   
         
-    imgMosYY = imgMosYY.addBands(imgMin).addBands(imgMax).addBands(
+    imgMosaicYY = imgMosaicYY.addBands(imgMin).addBands(imgMax).addBands(
                     imgstdDev).addBands(imgAmp).addBands(imgMean
-                        ).addBands(imgMedian)
+                        ).addBands(imgMedian).addBands(imgTextura)
 
-    return imgMosYY.select(bandas_select)
+    return imgMosaicYY.select(bandas_select)
 
 def exportImage(imgYear, name, geom):        
     idasset =  params['assets']['outputAsset'] + '/' + name
@@ -305,18 +323,18 @@ exportROIs = True
 numfeat = 5
 
 lsAnos = [k for k in range(params['initYear'], params['endYear'] + 1)]
-lsAnos = [2023]
+# lsAnos = [2023]
 print(lsAnos)
 gradeLandsat = ee.FeatureCollection(params['assets']['gradeLandsat'])
 coletaSoil = True
 # imgColmosaic = ee.ImageCollection(params['assets']['inputAsset'])
 dictPath = {}
-lstBnd = ['min','max','stdDev','amp','median','mean','class']
-bandas_imports = ['min','max','stdDev','amp','median','mean']
+# lstBnd = ['min','max','stdDev','amp','median','mean','class']
+bandas_imports =['min','max','stdDev','amp','median','mean', 'min_contrast', 'min_diss', 'min_savg']
 # 'AMAZONIA','CAATINGA','CERRADO','MATA_ATLANTICA','PAMPA','PANTANAL'
 biome_act = 'CAATINGA'
 cont = 0
-cont = gerenciador(cont, params)
+# cont = gerenciador(cont, params)
 
 regProcess = [12,13,14]
 # ROIsManual = getPointsfromFolderManual(biome_act)
@@ -330,7 +348,7 @@ lst_imgFails = []
 for wrsP in params['lsPath'][biome_act][:]:   #    
     print( 'WRS_PATH # ' + str(wrsP))
     for wrsR in params['lsGrade'][biome_act][wrsP][:]:   #
-        cont = gerenciador(cont, params)
+        # cont = gerenciador(cont, params)
         print('WRS_ROW # ' + str(wrsR))
         fPathRow = 'T' + wrsP + '0' + wrsR
         
@@ -344,15 +362,15 @@ for wrsP in params['lsPath'][biome_act][:]:   #
         lstOrbViz = dictPathRowVis[keyPathRow]
         print("list de orbita de Vizinhos ", lstOrbViz)
 
-        for index, ano in enumerate(lsAnos):            
+        for index, ano in enumerate(lsAnos[2:]):            
             print("==== ano {} : {} ====".format(index, ano))
             if ano < params['endYear']:
                 ROIs_Viz = GetSHPsfromVizinhos(lstOrbViz, geoms, ano, biome_act)
             else:
                 ROIs_Viz = GetSHPsfromVizinhos(lstOrbViz, geoms, 2022, biome_act)
             sizeROIs = ee.FeatureCollection(ROIs_Viz).size().getInfo()
-            print("==============first size conditions = ", sizeROIs)
-            exit()
+            print("============== first size conditions = ", sizeROIs)
+            # exit()
             if sizeROIs == 0:
                 lst_Viz = []
                 for cc,nviz in enumerate(lstOrbViz):
@@ -366,11 +384,13 @@ for wrsP in params['lsPath'][biome_act][:]:   #
                 ROIs_Viz = ee.FeatureCollection(ROIs_Viz)             
                 sizeROIs = ROIs_Viz.size().getInfo()
                 print("sizeROIs ", sizeROIs)
-
-            nameROIsManual = biome_act + "_" + str(ano) + '_' + regpath
-            ROIsManual = getPointsfromFolderManual(nameROIsManual)
-            sizeROIsM = ROIsManual.size().getInfo()
-            print("size ROIS manual = ", sizeROIsM)
+            sys.exit()
+            # nameROIsManual = biome_act + "_" + str(ano) + '_' + regpath
+            # ROIsManual = getPointsfromFolderManual(nameROIsManual)
+            # sizeROIsM = ROIsManual.size().getInfo()
+            # print("size ROIS manual = ", sizeROIsM)
+            sizeROIsM = 0
+            # sys.exit()
             nameExport = 'classSoil_' + biome_act + "_" + str(ano) + '_' + wrsP + '_' + wrsR + 'V' + params['version'] 
             if sizeROIs > 0:
                 print("  =>  ", ROIs_Viz.aggregate_histogram('class').getInfo())  

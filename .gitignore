@@ -10,3 +10,5 @@ src/teste
 src/teste/*
 src/uties
 src/uties/*
+src/feature_analysis/SHP_pointsSoil/*
+src/feature_analysis/roisSoils/*
