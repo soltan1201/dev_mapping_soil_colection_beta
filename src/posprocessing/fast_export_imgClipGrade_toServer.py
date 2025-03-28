@@ -221,7 +221,7 @@ print(f"we loaded {numIDCod} from asset ")
 version = 1
 
 step = 100
-for yyear in params['lstYear'][:3]:
+for yyear in params['lstYear'][10:]:
     for ii in range(0, len(lstIdCodGrade), step):    
         idCodeGroup = lstIdCodGrade[ii: ii + step]
         lstCodeG = []
