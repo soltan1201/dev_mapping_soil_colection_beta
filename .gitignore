@@ -1,5 +1,7 @@
 src/dados/*
 !src/dados/.gitkeep
+!src/dados/patchs.gitkeep
+!src/dados/patchs_pred.gitkeep
 src/documentos/*
 !src/documentos/.gitkeep
 src/uties

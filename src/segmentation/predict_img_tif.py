@@ -124,7 +124,7 @@ names_imgtif = os.listdir(path_patchs)
 print("Arquivos no bucket:", names_imgtif[:5])  
 numero_bnd = len(bandasInt)
 
-for cc, name_img in enumerate(names_imgtif[2:]):
+for cc, name_img in enumerate(names_imgtif[:3]):
     print(f"#{cc} processing {name_img}")
     arr_pred, to_save = processing_predict_img(name_img, path_patchs, numero_bnd)
     if to_save:
