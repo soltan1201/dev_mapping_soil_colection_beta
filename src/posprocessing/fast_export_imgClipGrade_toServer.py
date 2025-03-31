@@ -8,7 +8,7 @@ DISTRIBUIDO COM GPLv2
 import ee
 import os
 import sys
-import copy
+import glob
 import time
 import argparse
 import requests
@@ -58,7 +58,7 @@ params = {
     ]
 }
 
-path_folder = '/home/superuser/Dados/mapbiomas/dev_mapping_soil_colection_beta/src/Dados/patchs'
+path_folder = '/home/superuser/Dados/mapbiomas/dev_mapping_soil_colection_beta/src/dados/patchs'
 parser = argparse.ArgumentParser()
 parser.add_argument('dir_folder', type=str,  
                     default=path_folder, 
@@ -220,8 +220,12 @@ numIDCod = 2228
 print(f"we loaded {numIDCod} from asset ")
 version = 1
 
+lstTIFsaved = [fTIF.split("/")[-1] for fTIF in glob.glob(path_folder + '/*')]
+print(f"we have {len(lstTIFsaved)} TIF saved ")
+print(" >> ", lstTIFsaved[:5])
+# sys.exit()
 step = 100
-for yyear in params['lstYear'][10:]:
+for yyear in params['lstYear'][:3]:
     for ii in range(0, len(lstIdCodGrade), step):    
         idCodeGroup = lstIdCodGrade[ii: ii + step]
         lstCodeG = []
@@ -230,13 +234,13 @@ for yyear in params['lstYear'][10:]:
                 name_export = f"{idCode}_{mmonth}_{yyear}_r{regionSelect}_v{version}"
                 lstCodeG.append(name_export)
 
-        print(f"========= exporting {len(lstCodeG)} process ================================")
-        pool = multiprocessing.Pool(5)
-        pool.starmap(getResult, enumerate(lstCodeG))
+    print(f"========= exporting {len(lstCodeG)} process ================================")
+    pool = multiprocessing.Pool(5)
+    pool.starmap(getResult, enumerate(lstCodeG))
 
-        pool.close()
-        pool.join()
-        time.sleep(60)
+    pool.close()
+    pool.join()
+    time.sleep(60)
         # sys.exit()
 
 

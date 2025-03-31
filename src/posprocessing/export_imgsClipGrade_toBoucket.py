@@ -129,13 +129,16 @@ def exportImage_bucket(imgYear, name, geom):
         'image': imgYear, 
         'description': name, 
         'bucket': gcBucket,
-        'fileNamePrefix': 'recorte_reg31',
+        'fileNamePrefix': "patchs_soil/" + name,
         'crs': projection['crs'],
         'crsTransform': projection['transform'],
         'region': geom.getInfo()['coordinates'],  #getInfo(), #
         # 'scale': 30, 
         # 'maxPixels': 1e13,
         # "pyramidingPolicy": {".default": "mode"}
+        "formatOptions": {
+            "cloudOptimized": True
+        }
     }
 
     task = ee.batch.Export.image.toCloudStorage(**optExp)
@@ -168,13 +171,13 @@ bandasInt = [
     'evi'
 ]
 # sys.exit()
-for yyear in params['lstYear'][-2:]:
+for yyear in params['lstYear'][-1:]:
     bandSelect = 'classification_' + str(yyear)
     if yyear == 2024:
         bandSelect = 'classification_2023'
     # building the mask of areas to mapping mosaic
     maskYYSoil = mMapbiomas.select(bandSelect).remap(params['classMapB'], params['classNotSoil']);
-    for mmonth in range(1, 13):
+    for mmonth in range(12, 13):
         data_inicial = ee.Date.fromYMD(yyear, mmonth, 1)
         imColMonth = (ee.ImageCollection(params['asset_collectionId'])
                         .filterBounds(regionSel.geometry())
