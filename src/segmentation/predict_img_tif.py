@@ -8,10 +8,10 @@ DISTRIBUIDO COM GPLv2
 ### importando librerias
 import os
 import sys
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import geopandas as gpd
 import rasterio
-from rasterio.plot import show
+# from rasterio.plot import show
 import numpy as np
 from pathlib import Path
 pathparent = str(Path(os.getcwd()).parents[0])
@@ -108,28 +108,39 @@ try:
     if str(path_patchs) != str(tmpFolder):
         print("<<<<<< change the path folder  >>>>>>>>>>>>>> ")
         path_patchs = tmpFolder
+        path_patchs_pred = os.path.join()
 except argparse.ArgumentTypeError as e:
     print(f"Invalid argument: {e}")
 
-
 # sys.exit()
+print(f' visit patch >> {path_patchs}')
+print(f' visit patch Predict >> {path_patchs_pred}')
 # Recreate the exact same model, including its weights and the optimizer
 name_model = 'model_LSoil_22_03_25_month_all_15v_7000e.keras'
 modelMond = keras.models.load_model(os.path.join(path_model, name_model))
 modelMond.summary()
 
+lstFilesPred = os.listdir(path_patchs_pred)
+lstarrayPred = [arr_name.replace('.npy', '.tif') for arr_name in lstFilesPred]
+print(f" we have {len(lstarrayPred)} array numpy processed ")
+print("name files array numpy changes ", lstarrayPred[:5])
+del lstFilesPred
 # Listar arquivos no bucket
 names_imgtif = os.listdir(path_patchs)
 # Mostra os primeiros 5 arquivos
 print("Arquivos no bucket:", names_imgtif[:5])  
-numero_bnd = len(bandasInt)
-
-for cc, name_img in enumerate(names_imgtif[:3]):
+numero_bnd = len(names_imgtif)
+print(f" files total in repository {numero_bnd}")
+lstNamesTIF = [name_tif for name_tif in names_imgtif if name_tif not in lstarrayPred]
+del lstarrayPred
+del names_imgtif
+print(f" we to process {len(lstNamesTIF)} patchs .... ")
+# sys.exit()
+for cc, name_img in enumerate(lstNamesTIF[:]):
     print(f"#{cc} processing {name_img}")
     arr_pred, to_save = processing_predict_img(name_img, path_patchs, numero_bnd)
     if to_save:
         print("shape array predict ", arr_pred.shape)
-
         # Salvar
         dir_name = os.path.join(path_patchs_pred, name_img.replace(".tif",".npy"))
         print(f"saving in >> {dir_name}")
