@@ -116,7 +116,7 @@ askHD = input('the datas are another HD?, digite true or false : ')
 if askHD == 'true':
     new_path = input("please digit the complet dir of folder dataset >")
     if new_path:
-        path_patchs_pred = new_path
+        path_patchs = new_path
 
 # sys.exit()
 print(f' visit patch >> {path_patchs}')
@@ -140,8 +140,8 @@ print(f" files total in repository {numero_bnd}")
 lstNamesTIF = [name_tif for name_tif in names_imgtif if name_tif not in lstarrayPred]
 del lstarrayPred
 del names_imgtif
-print(f" we to process {len(lstNamesTIF)} patchs .... ")
-sys.exit()
+print(f" we have to process {len(lstNamesTIF)} patchs .... ")
+# sys.exit()
 for cc, name_img in enumerate(lstNamesTIF[:]):
     print(f"#{cc} processing {name_img}")
     arr_pred, to_save = processing_predict_img(name_img, path_patchs, numero_bnd)
