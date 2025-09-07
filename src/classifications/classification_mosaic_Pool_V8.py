@@ -32,29 +32,29 @@ except:
 params = {
     'gradeLandsat': 'projects/mapbiomas-workspace/AUXILIAR/cenas-landsat-v2',         
     'region': 'users/geomapeamentoipam/AUXILIAR/regioes_biomas_col2',
-    'assetMapbiomas90': 'projects/mapbiomas-public/assets/brazil/lulc/collection9/mapbiomas_collection90_integration_v1',
+    'assetMapbiomas100': 'projects/mapbiomas-public/assets/brazil/lulc/collection10/mapbiomas_brazil_collection10_integration_v2',
     'asset_collectionId': 'LANDSAT/COMPOSITES/C02/T1_L2_32DAY',
     # 'asset_rois': {'id' : 'projects/geo-data-s/assets/ROIsSoil'},
-    'asset_rois': "projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoilexposto",
-    'outputAsset': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOILV5',
+    'asset_rois': {"id" : "projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/ROIsSoilexposto"},
+    'outputAsset': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOILV6',
     'bnd_L': ['blue','green','red','nir','swir1','swir2'],
-    'classMapB' :   [3, 4, 5, 6, 9,12,13,15,18,19,20,21,22,23,24,25,26,29,30,31,32,33,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,62],
-    'classNotSoil': [0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    'classMapB' :   [15,18,19,20,21,22,23,24,25,29,30,32,35,36,37,38,39,40,41,42,43,44,45,46,47,48,62],
+    'classNotSoil': [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     'regionsSel': [
         '21','22','23','24',
-        '31','32','35','34','33', #
-        '60','51','52','53',
-        '41','42','44','45','46','47'
-        '11','12','13','14','15','16','17','18','19',
+        # '31','32','35','34','33', #
+        # '60','51','52','53',
+        # '41','42','44','45','46','47'
+        # '11','12','13','14','15','16','17','18','19',
     ],
     'lstYear': [
         # 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 
-        # 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 
-        2013, 2014, 2015, 2016, 2017, 2018, 2019, 
-        2020, 2021, 2022, 2023, 2024
+        # 1999,
+        2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 
+        2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
     ],
     'pmtGTB': {
-        'numberOfTrees': 16, 
+        'numberOfTrees': 35, 
         'shrinkage': 0.1,  
         'maxNodes': 3,
         'samplingRate': 0.8, 
@@ -113,23 +113,32 @@ dictRegions = {
     '60': 'PANTANAL'
 };
 dictHypePmtro = {
-    'region_31': {'learning_rate': 1, 'max_features': 4, 'n_estimators': 35},
-    'region_32': {'learning_rate': 1, 'max_features': 5, 'n_estimators': 35},
-    'region_33': {'learning_rate': 1, 'max_features': 3, 'n_estimators': 35},
-    'region_35': {'learning_rate': 1, 'max_features': 4, 'n_estimators': 35},
-    'region_34': {'learning_rate': 1, 'max_features': 4, 'n_estimators': 35}
+    'region_31': {'learning_rate': 0.05, 'max_features': 4, 'n_estimators': 35},
+    'region_32': {'learning_rate': 0.05, 'max_features': 5, 'n_estimators': 35},
+    'region_33': {'learning_rate': 0.05, 'max_features': 3, 'n_estimators': 35},
+    'region_35': {'learning_rate': 0.05, 'max_features': 4, 'n_estimators': 35},
+    'region_34': {'learning_rate': 0.05, 'max_features': 4, 'n_estimators': 35},
+    'region_21': {'learning_rate': 0.05, 'max_features': 4, 'n_estimators': 45},
+    'region_22': {'learning_rate': 0.05, 'max_features': 5, 'n_estimators': 45},
+    'region_23': {'learning_rate': 0.05, 'max_features': 3, 'n_estimators': 45},
+    'region_24': {'learning_rate': 0.05, 'max_features': 4, 'n_estimators': 45},
 }
 # // 4. Calcule o índice NDVI
 def index_select(nImg):
     # var nImg = applyScaleFactors(image);
     ndvi = nImg.normalizedDifference(['nir', 'red']).rename('ndvi')
     ndvi = ndvi.add(1).multiply(10000).toUint16()
-    ndsi = nImg.normalizedDifference(['swir1', 'nir']).rename('ndsi')
+    
+    # normalized difference soil index (NDSI)
+    #(B7 - B2)/ (B7 + B2)
+    ndsi = nImg.normalizedDifference(['swir1', 'blue']).rename('ndsi')
     ndsi = ndsi.add(1).multiply(10000).toUint16()
+
     bsi = nImg.expression(
                 "float(((b('red') + b('swir1')) - (b('nir') + b('blue'))) / ((b('red') + b('swir1')) + (b('nir') + b('blue'))))"
             ).rename('bsi')
     bsi = bsi.add(1).multiply(10000).toUint16()
+    
     evi = nImg.expression(
                 "float(2.4 * (b('nir') - b('red')) / (1 + b('nir') + b('red')))"
                 ).rename('evi')
@@ -139,22 +148,76 @@ def index_select(nImg):
                 "float((2 * b('nir') + 1 - sqrt((2 * b('nir') + 1) * (2 * b('nir') + 1) - 8 * (b('nir') - b('red'))))/2)"
             ).rename('msavi')
     msavi = msavi.add(10).multiply(1000).toUint16()
+
     # UI	Urban Index	urban
     ui = nImg.expression(
             "float((b('swir2') - b('nir')) / (b('swir2') + b('nir')))")\
                 .rename(['ui']).toFloat() 
     ui = ui.add(1).multiply(10000).toUint16()
+
     # MBI	Modified Bare Soil Index
-    mbi = nImg.expression(
+    mbi = (nImg.expression(
             "float(((b('swir1') - b('swir2') - b('nir')) /" + 
-                " (b('swir1') + b('swir2') + b('nir'))) + 0.5)")\
+                " (b('swir1') + b('swir2') + b('nir'))) + 0.5)")
                     .rename(['mbi']).toFloat() 
+        )
     mbi = mbi.add(1).multiply(10000).toUint16()
+
+    vdvi = (nImg.expression(
+            "float((2 * b('green') - b('red') - b('blue')) /" + 
+                " (2 * b('green') + b('red') + b('blue')))")
+                    .rename(['vdvi']).toFloat() 
+        )
+    vdvi = vdvi.add(1).multiply(10000).toUint16()
+    
+    # NDBI=(TM5−TM4)/(TM5+TM4) 
+    # Normalized Diﬀerence Built-up Index (NDBI) 
+    ndbi = (nImg.expression(
+            "float( (b('swir1') - b('red')) / (b('swir1') + b('red')) )")
+                    .rename(['ndbi']).toFloat() 
+        )
+    ndbi = ndbi.add(1).multiply(10000).toUint16()
+
+    # mid-infrared index maps
+    # (TM5 - TM7) / (TM5 + TM7)
+    # (swir1 - swir2) / (swir1 + swir2)
+    miim = (nImg.expression(
+            "float((b('swir1') - b('swir2')) / (b('swir1') + b('swir2')))")
+                .rename(['miim']).toFloat()) 
+    miim = miim.add(1).multiply(10000).toUint16()
+
+    # IBI (Index-based Built-Up Index) [1]  
+    # (2 * B5 / (B5 + B4) - [B4/(B4 + B3) + B2/(B2+B5)])/ (2 * B5 / (B5 + B4) + [B4/(B4 + B3) + B2/(B2+B5)])
+    ibi = (nImg.expression(
+            "float((((2 * b('swir1')) / (b('swir1') + b('nir'))) - (b('nir') / (b('nir') + b('red'))) + ( b('green') / (b('swir1') + b('green')))) /" +     
+                 " (((2 * b('swir1')) / (b('swir1') + b('nir'))) + (b('nir') / (b('nir') + b('red'))) + ( b('green') / (b('swir1') + b('green')))))")
+                    .rename(['ibi']).toFloat() 
+        )
+    ibi = ibi.add(1).multiply(10000).toUint16()
+
+    # Bare Soil Index (BI) ok
+    # (swir2 + red) - (nir + blue) / ((swir2 + red) + (nir + blue))
+    bi = (nImg.expression(
+            "float(((b('swir2') + b('red')) - (b('nir') + b('blue')))/ ((b('swir2') + b('red')) + (b('nir') + b('blue'))))")
+                    .rename(['bi']).toFloat() 
+        )
+    bi = bi.add(1).multiply(10000).toUint16()
+
+    # Hyperspectral Bare Soil Index (HBSI)
+    # (swir2 + green) - (nir + blue) / ((swir2 + green) + (nir + blue))
+    hbsi = (nImg.expression(
+            "float(((b('swir2') + b('green')) - (b('nir') + b('blue')))/ ((b('swir2') + b('green')) + (b('nir') + b('blue'))))")
+                    .rename(['hbsi']).toFloat() 
+        )
+    hbsi = hbsi.add(1).multiply(10000).toUint16()
 
     imgM = nImg.multiply(10000)
     return (imgM.addBands(ndvi).addBands(ndsi)
                 .addBands(bsi).addBands(evi)
                 .addBands(msavi).addBands(ui)
+                .addBands(vdvi).addBands(ndbi)
+                .addBands(bi).addBands(hbsi)
+                .addBands(miim).addBands(ibi)
                 .addBands(mbi).toUint16()
                 .copyProperties(nImg)
         )
@@ -162,7 +225,7 @@ def index_select(nImg):
 def GET_NDFIA(IMAGE):
         
     lstBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2']
-    lstFractions = ['gv', 'shade', 'npv', 'soil', 'cloud']
+    lstFractions = ['gv', 'npv', 'soil', 'shade', 'cloud']
     endmembers = [            
         [0.05, 0.09, 0.04, 0.61, 0.30, 0.10], #/*gv*/
         [0.14, 0.17, 0.22, 0.30, 0.55, 0.30], #/*npv*/
@@ -170,15 +233,17 @@ def GET_NDFIA(IMAGE):
         [0.0 , 0.0,  0.0 , 0.0 , 0.0 , 0.0 ], #/*Shade*/
         [0.90, 0.96, 0.80, 0.78, 0.72, 0.65]  #/*cloud*/
     ];
-
-    fractions = ee.Image(IMAGE).select(lstBands).unmix(endmembers= endmembers, sumToOne= True, nonNegative= True).float()
+    # , sumToOne= True, nonNegative= True
+    fractions = ee.Image(IMAGE).select(lstBands).unmix(endmembers= endmembers).float()
     fractions = fractions.rename(lstFractions)
+    
     # // print(UNMIXED_IMAGE);
     # GVshade = GV /(1 - SHADE)
     # NDFIa = (GVshade - SOIL) / (GVshade + )
-    NDFI_ADJUSTED = fractions.expression(
-                            "float(((b('gv') / (1 - b('shade'))) - b('soil')) / ((b('gv') / (1 - b('shade'))) + b('npv') + b('soil')))"
-                            ).rename('ndfia')
+    NDFI_ADJUSTED = ( fractions.expression(
+                            "float(((b('gv') / (1 - b('shade'))) - b('soil')) / ((b('gv') / (1 - b('shade'))) + b('npv') + b('soil')))" )
+                            .rename('ndfia')
+                    )
 
     NDFI_ADJUSTED = NDFI_ADJUSTED.add(1).multiply(10000).toUint16()
     RESULT_IMAGE = (ee.Image(index_select(IMAGE)) ## adicionando indices extras
@@ -245,6 +310,28 @@ def get_theBest_hyperparameter_tuning(nameRegion):
 
     return learning_rate, n_estimators, max_features
 
+def getPointsfromFolderManual(idreg, nyear):
+    
+    print(f" região {idreg} => {nyear} ")
+    getlistPtos = ee.data.listAssets(params['asset_rois']['id'])  
+    featColsPtos = ee.FeatureCollection([])
+    
+    # print("getlistPtos ", getlistPtos['assets']);
+    for idAsset in tqdm(getlistPtos['assets']):    
+        # print(" dict >> ", idAsset['id'])     
+        path_ = idAsset['id']
+        name_file = path_.split('/')[-1]
+        # print(name_file)
+        if str(idreg) in name_file and str(nyear) in name_file:
+            print(f"loading and merge .... featureCollection >>> {name_file}")
+            mes =  name_file.split('_')[-1]
+            feat_tmp = ee.FeatureCollection(path_)
+            feat_tmp= feat_tmp.map(lambda feat: feat.set('month', int(mes)))
+            featColsPtos = featColsPtos.merge(feat_tmp)    
+        
+    return  featColsPtos
+
+
 def export_classification_soilMap_by_Year(nkeyPathRow_YY):
     # f"classSoil_reg_{regionSelect}_{yyear}_{mmonth}_v{params['version']}"['version'] 
     partes = nkeyPathRow_YY.split('_')
@@ -253,53 +340,73 @@ def export_classification_soilMap_by_Year(nkeyPathRow_YY):
     yyear = int(partes[3])
     mmonth = int(partes[4])
     version = partes[5]
-    # contAcount = gerenciador(yyear)
-    # print("conta ", contAcount)
+    print(f"region: {reg} | year : {yyear} | mmonth {mmonth} | version: {version} ")
+    
+    # bandasInt = [
+    #     'blue', 'red', 'nir', 'swir1', 'swir2',
+    #     'ndvi', 'ndsi', 'bsi', 'gv', 'npv', 'soil',
+    #     'ndfia', 'msavi', 'ui', 'mbi', 'vdvi', 'ndbi',
+    #     'evi', 'bi', 'hbsi','miim','ibi', 'class'
+    # ]
     bandasInt = [
-        'blue', 'red', 'nir', 'swir1', 'ndvi', 'ndsi', 'bsi', 
-        'gv', 'shade', 'soil', 'ndfia', 'msavi', 'ui', 'mbi',
-        'evi', 'class'
+        'ui', 'miim', 'ndsi', 'soil', 'bsi', 'bi', 'mbi', 'vdvi', 'blue',
+       'hbsi', 'gv', 'ndbi', 'ibi' # , 'ndfia'
     ]
-
     regionSel = ee.FeatureCollection(params['region']).filter(ee.Filter.eq('region', reg))
-    imgMaskReg = regionSel.reduceToImage(['region'], ee.Reducer.first()).gte(1)
+    regionSel = regionSel.map(lambda feat: feat.set('id_codigo', 1))
+    # print(regionSel.aggregate_histogram('region').getInfo())
+    
+    imgMaskReg = regionSel.reduceToImage(['id_codigo'], ee.Reducer.first()).gt(0)
+    # sys.exit()
     try:
         print("region selecionadas ", regionSel.size().getInfo())
-        # sys.exit()
-        band_class = 'classification_' + str(yyear)
-        band_next = 'classification_' + str(yyear + 1)
-        if int(yyear) == 2024:
-            band_class = 'classification_2023'
-            band_next = 'classification_2023'
-        elif int(yyear) == 2023:
-            band_next = 'classification_2023'
+        band_class = 'classification_' + str(yyear)  
+        band_class_pos = 'classification_' + str(yyear + 1)         
+        
+        mMapbiomas_yy = (
+                    ee.Image(params['assetMapbiomas100'])
+                        .select(band_class)
+                        .remap(params['classMapB'], params['classNotSoil'], 0)
+                        .updateMask(imgMaskReg)
+                )
+        print("banda carregada >> ", mMapbiomas_yy.bandNames().getInfo())
 
-        mMapbiomas = (ee.Image(params['assetMapbiomas90']).select(band_class)
-                                .remap(params['classMapB'], params['classNotSoil'])
-                                .updateMask(imgMaskReg)
-                            )
-        mMapbiomasN = (ee.Image(params['assetMapbiomas90']).select(band_next)
-                                .remap(params['classMapB'], params['classNotSoil'])
-                                .updateMask(imgMaskReg)
-                            )
-        mMapbiomas = mMapbiomas.add(mMapbiomasN).gt(0)
+        mMapbiomas_pos = (
+                    ee.Image(params['assetMapbiomas100'])
+                        .select(band_class_pos)
+                        .remap(params['classMapB'], params['classNotSoil'], 0)
+                        .updateMask(imgMaskReg)
+                    )
+        print("banda carregada >> ", mMapbiomas_pos.bandNames().getInfo())
+
+        mMapbiomas_pos = mMapbiomas_pos.add(mMapbiomas_yy).gt(0)
 
         data_inicial = ee.Date.fromYMD(yyear, mmonth, 1)
         imColMonth = (ee.ImageCollection(params['asset_collectionId'])
                         .filterBounds(regionSel.geometry())
                         .filterDate(data_inicial, data_inicial.advance(1, 'month'))
                         .select(params['bnd_L']).first()
-                        .updateMask(mMapbiomas)
-                        )
+                        .updateMask(mMapbiomas_pos)
+                )
+
         print(" Loaded Imagem Collection Month  ", imColMonth.bandNames().getInfo())
         imColMonth = GET_NDFIA(imColMonth)    
-        imColMonth = imColMonth.divide(10000).toFloat()
-        path_shp_ROIs = os.path.join(params['asset_rois'], f"ROIs_reg_{reg}_{yyear}_{mmonth}")
-        shp_ROIs = ee.FeatureCollection(path_shp_ROIs).remap([1,2], [1,0], 'class')
+        # imColMonth = imColMonth.divide(10000).toFloat()
+
+        shp_ROIs = getPointsfromFolderManual(reg, yyear)
+        shp_ROIs = ( shp_ROIs                        
+                        .remap([1,2], [1,0], 'class')
+                )
+
         sizeROIs = shp_ROIs.aggregate_histogram('class').getInfo()
         print("============== first size conditions = ", sizeROIs)
-        classifierGTB = ee.Classifier.smileGradientTreeBoost(**params['pmtGTB']).train(shp_ROIs, 'class', bandasInt)
+
+        classifierGTB = (ee.Classifier.smileGradientTreeBoost(**params['pmtGTB'])
+                            .train(shp_ROIs, 'class', bandasInt)
+                            .setOutputMode('PROBABILITY')
+                    )
         classifiedGTB = imColMonth.classify(classifierGTB, 'classification_' + str(yyear))
+        classifiedGTB = classifiedGTB.multiply(10000).toInt16()
         mydict = {                        
             'version': version,
             'year': yyear,
@@ -311,7 +418,6 @@ def export_classification_soilMap_by_Year(nkeyPathRow_YY):
             'source': 'geodatin'                
         }         
         classifiedGTB = classifiedGTB.set(mydict)
-        # sys.exit()
         exportImage(classifiedGTB, nkeyPathRow_YY, regionSel.geometry())
 
     except:           
@@ -334,7 +440,7 @@ lstIdsmapsSaved = []
 arqFeitos = open("registros/orbitas_tiles_AnosV5.txt", 'w+')
 lst_imgFails = [] 
 lstImgtoProc = []
-for regionSelect in params['regionsSel'][9:14]:
+for regionSelect in params['regionsSel'][1:]:
     print('regions >> ', regionSelect)
     for yyear in params['lstYear']:
             # nameExport = 'classSoil_' + biomeAct + "_" + str(yyear) + '_' + nWrsP + '_' + nWrsR + 'V' + params['version'] 

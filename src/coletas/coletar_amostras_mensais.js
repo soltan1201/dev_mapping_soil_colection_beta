@@ -29,8 +29,8 @@ var paramVis = {
     mosaicoGEE: {
         bands: ["red","green","blue"],
         gamma: 1,
-        max: 0.2,
-        min: 0.05
+        max: 2000,
+        min: 5
     },
     indiceNDFI:{
         min: 1000, 
@@ -221,8 +221,6 @@ function index_select(nImg, reescalar){
     }
     return imgM.addBands(ndvi).addBands(evi).addBands(ndsi).addBands(bsi).toUint16().copyProperties(nImg);
 }
-
-
 
 function GET_NDFIA(IMAGE) {
         

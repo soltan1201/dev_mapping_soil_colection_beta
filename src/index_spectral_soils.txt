@@ -1,0 +1,60 @@
+mid-infrared index maps ok
+(TM5 - TM7) / (TM5 + TM7)
+(swir1 - swir2) / (swir1 + swir2)
+
+Bare Soil Index (BI) ok
+(swir2 + red) - (nir + blue) / ((swir2 + red) + (nir + blue))
+
+ Enhanced Built-Up and Bareness Index (EBBI),
+ (ETM5 - ETM4)/ 10 sqrt(ETM5 + ETM6)
+
+ IBI (Index-based Built-Up Index) [1] ok
+(2 * B5 / (B5 + B4) - [B4/(B4 + B3) + B2/(B2+B5)])/
+(2 * B5 / (B5 + B4) + [B4/(B4 + B3) + B2/(B2+B5)])
+
+
+NDBaI (Normalised Difference Bareness Index)
+(B5 - B6)/ (B5 + B6)
+
+normalized difference soil index (NDSI)
+(B7 - B2)/ (B7 + B2)
+
+normalized difference built-up index (NDBI) ok
+(B5 - B4)/ (B5 + B4)
+
+
+UI  Kawamura et al. (1996, 1997, 1998
+((B5 - B4)/ (B5 + B4) + 1) x 100
+
+
+Normalized difference salinity index NDSI
+(R - NIR)/(R + NIR)
+
+Hyperspectral Bare Soil Index (HBSI) ok
+(swir2 + green) - (nir + blue) / ((swir2 + green) + (nir + blue))
+
+soil organic matter (SOM)
+2.9470429299 − 0.0019428105·Green + 0.0001621927 ·SWIR1
+silt (lodo)
+28.432522580 + 0.010296555 ∙ Red − 0.003522337 ∙ SWIR1
+
+
+ land surface water index (LSWI)
+ (NIR - swir)/(NIR + swir)
+
+
+ index-based built-up index IBI
+
+
+ built-up area (BU b)
+
+return (imgM.addBands(ndvi).addBands(ndsi)
+                .addBands(bsi).addBands(evi)
+                .addBands(msavi).addBands(ui)
+                .addBands(vdvi).addBands(ndbi)
+                .addBands(bi).addBands(hbsi)
+                .addBands(miim).addBands(ibi)
+                .addBands(som).addBands(silt)
+                .addBands(mbi).toUint16()
+                .copyProperties(nImg)
+        )

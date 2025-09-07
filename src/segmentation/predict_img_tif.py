@@ -45,6 +45,7 @@ def reshape_input(array):
     return array.reshape(shape[0], shape[1])# , 1
 def processing_predict_img(name_img, path_mosaico, bandNumP):
     path_matrix1 = os.path.join(path_mosaico,name_img)
+    print("matrix load from ", path_matrix1)
     try:
         raster_terreno = rasterio.open(path_matrix1)
         print("matrix load from ", path_matrix1)
@@ -66,6 +67,7 @@ def processing_predict_img(name_img, path_mosaico, bandNumP):
         image_pred = np.stack(image_pred)
         # deletar varaivel raster_terreno
         del raster_terreno
+        print("shape iamge pred ", image_pred.shape)
         # Predict image using the model
         # bandNumP = len(var_select)
         imgvector_pred = reshape_input(np.stack(image_pred).reshape(bandNumP, -1).T)

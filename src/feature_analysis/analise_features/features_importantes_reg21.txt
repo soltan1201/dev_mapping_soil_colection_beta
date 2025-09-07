@@ -1,0 +1,6 @@
+evi
+gv
+nir
+shade
+soil
+swir1

@@ -1,0 +1,15 @@
+region 21:
+'miim', 'ndfia', 'mbi', 'ndbi', 'nir', 'vdvi', 'ndsi', 'shade', 'red',
+'blue', 'ibi', 'gv', 'bsi', 'ndvi', 'hbsi', 'soil', 'bi', 'ui'
+
+region 22 :
+'miim', 'ndfia', 'vdvi', 'ndbi', 'blue', 'ndsi', 'nir', 'evi',
+'soil', 'shade', 'red', 'gv', 'ndvi', 'mbi', 'swir1', 'bi'
+
+region 23:
+'miim', 'ndfia', 'ndbi', 'mbi', 'nir', 'vdvi', 'ndsi', 'blue', 'shade',
+'red', 'gv', 'soil', 'bsi', 'bi', 'ui', 'hbsi', 'swir1'
+
+region 24:
+'ndfia', 'ndbi', 'miim', 'vdvi', 'mbi', 'ndsi', 'nir', 'shade', 'red',
+'blue', 'ndvi', 'gv', 'soil', 'bi', 'hbsi', 'swir1', 'ibi'

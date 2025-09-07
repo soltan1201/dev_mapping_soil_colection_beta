@@ -8,9 +8,7 @@ DISTRIBUIDO COM GPLv2
 import ee
 import os
 import sys
-# import copy
-# import math
-import argparse
+import json
 import collections
 collections.Callable = collections.abc.Callable
 
@@ -39,6 +37,7 @@ params = {
     'region': 'users/geomapeamentoipam/AUXILIAR/regioes_biomas_col2',
     'assetMapbiomas100': 'projects/mapbiomas-public/assets/brazil/lulc/collection10/mapbiomas_brazil_collection10_integration_v2',
     "asset_vigor_pastagem": 'projects/mapbiomas-public/assets/brazil/lulc/collection9/mapbiomas_collection90_pasture_vigor_v1',
+    "asset_gride_landsats": 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/grades_to_mapping_soil',
     'input_solo': 'users/diegocosta/doctorate/Bare_Soils_Caatinga',
     'asset_collectionId': 'LANDSAT/COMPOSITES/C02/T1_L2_32DAY',
     'classMapB' :   [3, 4, 5, 6, 9,12,13,15,18,19,20,21,22,23,24,25,26,29,30,31,32,33,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,62],
@@ -53,12 +52,10 @@ params = {
     ],
     'lstYear': [
         # 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997,
-        # 1998, 1999,
-        2000, 2001, 2002, 2003,
-        2004, 2005, 2006, 2007, 
-        2008, 2009, 2010, 2011, 2012, 
+        # 1998, 1999,2000, 2001, 
+        # 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 
         2013, 2014, 2015, 2016,
-        2017, 2018, 2019, 2020,
+        # 2017,  2018, 2019, # 2020,
         2021, 2022, 2023, 2024
     ],
     'numeroTask': 10,
@@ -195,7 +192,7 @@ def index_select(nImg):
 def GET_NDFIA(IMAGE):
         
     lstBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2']
-    lstFractions = ['gv',  'npv', 'soil', 'shade', 'cloud']
+    lstFractions = ['gv', 'shade', 'npv', 'soil', 'cloud']
     endmembers = [            
         [0.05, 0.09, 0.04, 0.61, 0.30, 0.10], #/*gv*/
         [0.14, 0.17, 0.22, 0.30, 0.55, 0.30], #/*npv*/
@@ -293,140 +290,148 @@ print("=====================  INICIALIZANDO PROCESSOS  =========================
 # https://code.earthengine.google.com/343381e6f097b46363cff77fe44d4c2d
 bandasInt = [
     'blue', 'red', 'nir', 'swir1', 'ndvi', 'ndsi', 'bsi', 
-    'gv', 'npv', 'soil', 'ndfia', 'msavi', 'ui', 'mbi',
+    'gv', 'shade', 'soil', 'ndfia', 'msavi', 'ui', 'mbi',
     'vdvi', 'ndbi','evi', 'bi', 'hbsi','miim','ibi', 'class'
 ]
 contAcount = 0
 # regionSelect = 31
 lst_regions = [int(reg) for reg in params['regionsSel']]
+# load path row of regions dict 
+file_path = os.path.join(pathparent, "dados/dict_regions_grades.json")
+dict_regions = {}
+try:
+    with open(file_path, 'r', encoding='utf-8') as arquivo_json:
+        dict_regions = json.load(arquivo_json)
+        print(f"\n Conteúdo do arquivo {file_path} carregado com {len(list(dict_regions.keys()))} regions ")
+        print("region # 1 >> ", list(dict_regions.keys())[0])
+except FileNotFoundError:
+    print("O arquivo 'dados.json' não foi encontrado.")
+
+except json.JSONDecodeError:
+    print("Erro ao decodificar o JSON.")
+# sys.exit()
+# load shp of grides from landsat constelation
+shp_grades_landsat = (ee.FeatureCollection(params["asset_gride_landsats"])
+                            .map(lambda feat: feat.set('id_code', 1)))
+
 for regionSelect in lst_regions[:]:
     print('regions >> ', regionSelect)
-    regionSel = ee.FeatureCollection(params['region']).filter(ee.Filter.eq('region', int(regionSelect)))
-    imgMaskReg = regionSel.reduceToImage(['region'], ee.Reducer.first()).gt(1)
-    print("region selecionadas ", regionSel.first().get('region').getInfo())
-    # print(regionSel.first().get('region').getInfo())
-    # utilizaremos mapbiomas para coletar areas de solos que podem ser balizadas por essa área no ndfia
-    mMapbiomas = ee.Image(params['assetMapbiomas100']).updateMask(imgMaskReg)
-     
-    print("************* raste MAPBIOMAS carregado **********************")
-    # print(mMapbiomas.bandNames().getInfo())
-    if regionSelect < 25:
-        print(" ------ coletando na região da Caatinga ---- ")
-        layer_soil = ee.Image(params['input_solo']).unmask(0)
-        # Maximo de área de solo exposto em toda a serie historica
-        mask_max_solo = layer_soil.reduce(ee.Reducer.sum()).gt(0)
-        # print(layer_soil.bandNames().getInfo())
-    else:
-        # class soil in mapbiomas maps 
-        mask_max_solo = mMapbiomas.eq(25).reduce(ee.Reducer.sum()).gt(0)
+    regionSel = ee.FeatureCollection(params['region']).filter(ee.Filter.eq('region', regionSelect))
+    total_pr = len(dict_regions[str(regionSelect)])
+    for cc, path_row in enumerate(dict_regions[str(regionSelect)]):
+        print(f' # {cc}/{total_pr} processing path_row {path_row}')
+        # imgMaskReg = regionSel.reduceToImage(['region'], ee.Reducer.first()).gt(1)
+        # print("region selecionadas ", regionSel.first().get('region').getInfo())
+        # print(regionSel.first().get('region').getInfo())
 
-    # sys.exit()
-    for yyear in params['lstYear'][:]:
-        mapaYY = mMapbiomas.select('classification_' + str(yyear))
-        lstIntervaloYY = getIntervalo(yyear)
+        shp_grad_reg = shp_grades_landsat.filter(ee.Filter.eq('TILE_T', path_row))
+        imgMask_pr = shp_grad_reg.reduceToImage(['id_code'], ee.Reducer.first()).gt(0)
+        print("grade selecionada ", shp_grad_reg.first().get('TILE_T').getInfo())
+        # print(regionSel.first().get('region').getInfo())
 
-        print(f'processing year {yyear} and list >> {lstIntervaloYY}')
-        lstIntBandsMB = ['classification_' + str(kk) for kk in lstIntervaloYY]
-        lstIntBandsSoil = [f"Caatinga_{kk}_classification_{kk}" for kk in lstIntervaloYY]
+        # utilizaremos mapbiomas para coletar areas de solos que podem ser balizadas por essa área no ndfia
+        mMapbiomas = ee.Image(params['assetMapbiomas100']).updateMask(imgMask_pr)
+        print("************* raste MAPBIOMAS carregado **********************")
+        # print(mMapbiomas.bandNames().getInfo())
+        # sys.exit()
         if regionSelect < 25:
-            # camada de soil sendo selecionada
-            # selecionando a clase de solo para valor 1            
-            print('lista de bandas selecionadas para o intervalo ', lstIntBandsSoil)
-            if int(yyear) < 2017:
-                maskYYSoil = layer_soil.select(lstIntBandsSoil).reduce(ee.Reducer.sum()).eq(3)
+            print(" ------ coletando na região da Caatinga ---- ")
+            layer_soil = ee.Image(params['input_solo']).unmask(0).updateMask(imgMask_pr)
+            # Maximo de área de solo exposto em toda a serie historica
+            mask_max_solo = layer_soil.reduce(ee.Reducer.sum()).gt(0)
+            # print(layer_soil.bandNames().getInfo())
+        else:
+            # class soil in mapbiomas maps 
+            mask_max_solo = mMapbiomas.eq(25).reduce(ee.Reducer.sum()).gt(0)
+
+        # sys.exit()
+        for yyear in params['lstYear'][:1]:
+            mapaYY = mMapbiomas.select('classification_' + str(yyear))
+            lstIntervaloYY = getIntervalo(yyear)
+            print(f'processing year {yyear} and list >> {lstIntervaloYY}')
+
+            lstIntBandsMB = ['classification_' + str(kk) for kk in lstIntervaloYY]
+            lstIntBandsSoil = [f"Caatinga_{kk}_classification_{kk}" for kk in lstIntervaloYY]
+
+            if regionSelect < 25:
+                # camada de soil sendo selecionada
+                # selecionando a clase de solo para valor 1            
+                print('lista de bandas selecionadas para o intervalo ', lstIntBandsSoil)
+                if int(yyear) < 2017:
+                    maskYYSoil = layer_soil.select(lstIntBandsSoil).reduce(ee.Reducer.sum()).eq(3)
+                else:
+                    lstBND = ['Caatinga_2016_classification_2016', 'Caatinga_2017_classification_2017', 'Caatinga_2018_classification_2018']
+                    maskYYSoil = layer_soil.select(lstBND).reduce(ee.Reducer.sum()).eq(3)
             else:
-                lstBND = [
-                    'Caatinga_2016_classification_2016', 
-                    'Caatinga_2017_classification_2017', 
-                    'Caatinga_2018_classification_2018'
-                ]
-                maskYYSoil = layer_soil.select(lstBND).reduce(ee.Reducer.sum()).eq(3)
-        else:
-            # selecionando a clase de solo para valor 1            
-            maskYYSoil = mMapbiomas.select(lstIntBandsMB).eq(25).reduce(ee.Reducer.sum()).eq(3)
-        # sys.exit()
-        # # vamos usar a camada de Vigor da pastagens 
-        # # https://code.earthengine.google.com/c314d51721046e6ed6f69af502ee1428
-        # usaremos faixas de NDFIa
-        # https://code.earthengine.google.com/0434c7ac279cf361faae298a46b57f42
-
-        ## selecionando as áreas coletaveis e a serem classificadas 
-        ## usando a mascara de Mapbiomas... tirando as áreas com agua e áreas com 
-        ## vegetação natural 
-        if int(yyear) < 2024:            
-            mascaraWater = mMapbiomas.select('classification_' + str(yyear + 1)).eq(26)
-            mascaraWater = mascaraWater.eq(0)  # áreas não agua 
-            mascaraNat = mMapbiomas.select('classification_' + str(yyear + 1)).lt(14)
-            
-        else:
-            mascaraWater = mMapbiomas.select('classification_2024').eq(26)
-            mascaraWater = mascaraWater.eq(0)  # áreas não agua 
-            mascaraNat = mMapbiomas.select('classification_2024').lt(14)
-
-        mascaraNat = mascaraNat.eq(0).And(mascaraWater)
-
-        # juntando as duas classes 
-        # maskYYSoil = maskYYSoil.add(maskNotSoil).selfMask()
-        for mmonth in range(1, 13):
-            data_inicial = ee.Date.fromYMD(yyear, mmonth, 1)
-            imColMonth = (ee.ImageCollection(params['asset_collectionId'])
-                            .filterBounds(regionSel.geometry())
-                            .filterDate(data_inicial, data_inicial.advance(1, 'month'))
-                            .select(params['bnd_L']).first()
-                            .updateMask(mascaraNat) # tirando todos os pixels que poderiam ser agua aou vegetação
-                            .updateMask(imgMaskReg) # enquadrando 
-                        )
-            print(" Loaded Imagem Collection Month  ", imColMonth.bandNames().getInfo())
-
-            #// Create a cloud-free, most recent value composite.
+                # selecionando a clase de solo para valor 1            
+                maskYYSoil = mMapbiomas.select(lstIntBandsMB).eq(25).reduce(ee.Reducer.sum()).eq(3)
             # sys.exit()
-            monthNDFIa = GET_NDFIA(imColMonth)
-            print("lista de bandas  ", monthNDFIa.bandNames().getInfo())
-            # sys.exit()
-            # faxeamento do NDFIa para as áreas de coletas 
-            # definindo intervalos de faixas 
-            faixa_min = 8000
-            faixa_max = 15000  #10500
-            faixa_minSoil = 6500
-            areas_col_notSoil = monthNDFIa.select('ndfia').gte(faixa_max).And(mask_max_solo.eq(0))        
-            
-            # areas_col_transic = (monthNDFIa.select('ndfia').lte(faixa_min)
-            #                         .And(monthNDFIa.select('ndfia').gte(faixa_minSoil))
-            #                 )
-            # areas_col_Soil = monthNDFIa.select('ndfia').lte(faixa_minSoil)
-            # areas_col_Soil = areas_col_Soil.multiply(1)   # ele já é 1
-            # areas_col_transic = areas_col_transic.And(mask_max_solo.eq(0)).multiply(2)
-            areas_col_notSoil = areas_col_notSoil.multiply(2)
-            
+            # # vamos usar a camada de Vigor da pastagens 
+            # # https://code.earthengine.google.com/c314d51721046e6ed6f69af502ee1428
+            # usaremos faixas de NDFIa
+            # https://code.earthengine.google.com/0434c7ac279cf361faae298a46b57f42
 
-            # if regionSelect < 25:
-            #     # ele vai restringir mais ainda a áreas se suposto solo
-            #     maskYYSoil = maskYYSoil #.And(areas_col_Soil)
-            # else:
-            #     # ele vai ampliar mais ainda a áreas se suposto solo
-            #     # maskYYSoil = maskYYSoil.Or(areas_col_Soil)
-            #     # tirar todas as áreas de interseção com as áreas de transcisão e não solo
-            #     # areas_col_transic = areas_col_transic.multiply(maskYYSoil.eq(0))
-            #     # tirar todas as áreas de interseção com as áreas de transcisão e não solo
-            #     areas_col_notSoil = areas_col_notSoil.multiply(maskYYSoil.eq(0))
+            # juntando as duas classes 
+            # maskYYSoil = maskYYSoil.add(maskNotSoil).selfMask()
+            for mmonth in range(1, 13):
+                data_inicial = ee.Date.fromYMD(yyear, mmonth, 1)
+                imColMonth = (ee.ImageCollection(params['asset_collectionId'])
+                                .filterBounds(shp_grad_reg.geometry())
+                                .filterDate(data_inicial, data_inicial.advance(1, 'month'))
+                                .select(params['bnd_L']).first()
+                                .updateMask(imgMask_pr)
+                            )
+                print(" Loaded Imagem Collection Month  ", imColMonth.bandNames().getInfo())
 
-            # juntando todas as mascaras e tendo as classes 0, 1, 2, 3 separadas 
-            maskYYSoiljoined = maskYYSoil.add(areas_col_notSoil)   # .add(areas_col_transic)
-            MosaicoClean = (monthNDFIa.addBands(maskYYSoiljoined.rename('class'))
-                                .select(bandasInt).updateMask(maskYYSoiljoined.gt(0))
-                                .selfMask().toUint16()
-                                )
+                #// Create a cloud-free, most recent value composite.
+                # sys.exit()
+                monthNDFIa = GET_NDFIA(imColMonth)
+                print("lista de bandas  ", monthNDFIa.bandNames().getInfo())
+                # sys.exit()
+                # faxeamento do NDFIa para as áreas de coletas 
+                # definindo intervalos de faixas 
+                faixa_min = 9000
+                faixa_max = 15000  #10500
+                faixa_minSoil = 6500
+                areas_col_notSoil = monthNDFIa.select('ndfia').gte(faixa_max).And(mask_max_solo.eq(0))        
+                
+                # areas_col_transic = (monthNDFIa.select('ndfia').lte(faixa_min)
+                #                         .And(monthNDFIa.select('ndfia').gte(faixa_minSoil))
+                #                 )
+                # areas_col_Soil = monthNDFIa.select('ndfia').lte(faixa_minSoil)
+                # areas_col_Soil = areas_col_Soil.multiply(1)   # ele já é 1
+                # areas_col_transic = areas_col_transic.And(mask_max_solo.eq(0)).multiply(2)
+                areas_col_notSoil = areas_col_notSoil.multiply(2)
+                
 
-            ptosTemp = MosaicoClean.stratifiedSample(
-                                        numPoints= 1000, 
-                                        classBand= 'class', 
-                                        region= regionSel.geometry(),                                       
-                                        scale= 30,                                     
-                                        dropNulls= True,
-                                        geometries= True
+                # if regionSelect < 25:
+                #     # ele vai restringir mais ainda a áreas se suposto solo
+                #     maskYYSoil = maskYYSoil #.And(areas_col_Soil)
+                # else:
+                #     # ele vai ampliar mais ainda a áreas se suposto solo
+                #     # maskYYSoil = maskYYSoil.Or(areas_col_Soil)
+                #     # tirar todas as áreas de interseção com as áreas de transcisão e não solo
+                #     # areas_col_transic = areas_col_transic.multiply(maskYYSoil.eq(0))
+                #     # tirar todas as áreas de interseção com as áreas de transcisão e não solo
+                #     areas_col_notSoil = areas_col_notSoil.multiply(maskYYSoil.eq(0))
+
+                # juntando todas as mascaras e tendo as classes 0, 1, 2, 3 separadas 
+                maskYYSoiljoined = maskYYSoil.add(areas_col_notSoil)   # .add(areas_col_transic)
+                MosaicoClean = (monthNDFIa.toFloat().addBands(maskYYSoiljoined.rename('class'))
+                                    .select(bandasInt).updateMask(maskYYSoiljoined.gt(0))
+                                    .selfMask()
                                     )
-            # print("número de pontos ", ptosTemp.size().getInfo())
-            # salvando o processo 
-            save_ROIs_toAsset(ptosTemp, f'ROIs_reg_{regionSelect}_{yyear}_{mmonth}')
-    #         contAcount = gerenciador(contAcount) 
-        # sys.exit()
+                # TILE_T= path_row,
+                ptosTemp = MosaicoClean.stratifiedSample(
+                                            numPoints= 500, 
+                                            classBand= 'class', 
+                                            region= shp_grad_reg.geometry(),                                 
+                                            scale= 30,                                     
+                                            dropNulls= True,
+                                            geometries= True
+                                        )
+                # print("número de pontos ", ptosTemp.size().getInfo())
+                # salvando o processo 
+                save_ROIs_toAsset(ptosTemp, f'rois_{regionSelect}_{path_row}_{yyear}_{mmonth}')
+                #  contAcount = gerenciador(contAcount) 
+    sys.exit()

@@ -28,7 +28,7 @@ keyAssetr = 'integracao'
 
 param = {
     'classmappingV4': 'projects/nexgenmap/MapBiomas2/LANDSAT/DEGRADACAO/LAYER_SOILV4',
-    'inputAsset': 'projects/mapbiomas-workspace/public/collection8/mapbiomas_collection80_integration_v1',
+    'asset_Col9' : "projects/mapbiomas-public/assets/brazil/lulc/collection9/mapbiomas_collection90_integration_v1",
     'gradeLandsat': 'projects/mapbiomas-workspace/AUXILIAR/cenas-landsat-v2',
     'regions': 'users/geomapeamentoipam/AUXILIAR/regioes_biomas_col2',
     # 'inputAsset': 'projects/mapbiomas-workspace/AMOSTRAS/col8/CAATINGA/aggrements',

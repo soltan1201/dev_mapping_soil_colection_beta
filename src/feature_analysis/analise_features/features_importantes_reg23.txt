@@ -1,0 +1,11 @@
+bsi
+evi
+gv
+mbi
+ndvi
+nir
+red
+shade
+soil
+swir1
+ui

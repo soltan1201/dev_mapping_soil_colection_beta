@@ -3,6 +3,7 @@ import glob
 import pandas as pd
 import numpy as np
 import time
+import sys
 import matplotlib.pyplot as plt
 from itertools import starmap
 from sklearn.model_selection import train_test_split
@@ -36,8 +37,7 @@ from multiprocessing import Pool
 #     scores /= scores.max()
 #     plot_selectKBest(X_train, scores)
 colunas =  [
-    'amp', 'max', 'mean', 'median', 'min', 'min_contrast',
-    'min_diss', 'min_savg', 'stdDev'
+    'blue', 'bsi', 'evi', 'gv', 'mbi', 'msavi', 'ndbi', 'ndsi', 'ndvi', 'nir', 'red', 'shade', 'soil', 'swir1', 'ui', 'vdvi'
 ]
 
 analisesbyRegionOnly = True
@@ -148,22 +148,22 @@ def load_table_concate_to_process(dirFilesCSV, nameReg, showPlot= True):
     df_from_each_file = []
     for cc, pathcsv in enumerate(dirFilesCSV):
         df_tmp = pd.read_csv(pathcsv)
-        print(f"# {cc} loading train DF {df_tmp[colunas].shape} and ref {df_tmp['classe'].shape}")
+        print(f"# {cc} loading train DF {df_tmp[colunas].shape} and ref {df_tmp['class'].shape}")
         df_tmp = df_tmp.drop(['system:index', '.geo'], axis=1)
-        df_from_each_file.append(df_tmp)
-    
+        df_tmp = df_tmp[df_tmp['class'] != 5]
+        df_from_each_file.append(df_tmp)    
 
     concat_df  = pd.concat(df_from_each_file, axis=0, ignore_index=True)
     print("temos {} filas ".format(concat_df.shape))
 
     # X_train, X_test, y_train, y_test = train_test_split(df_tmp[colunas], df_tmp['class'], test_size=0.1, shuffle=False)
 
-    min_features_to_select = 2
+    min_features_to_select = 4
     print("get variaveis")    
     # gbm    
     skf = StratifiedKFold(n_splits=3)
     # model = RandomForestClassifier()
-    model = GradientBoostingClassifier(n_estimators=35, learning_rate=1.5, max_depth=2, random_state=10)
+    model = GradientBoostingClassifier(n_estimators=65, learning_rate=1.5, max_depth=2, random_state=10)
     rfecv = RFECV(
             estimator=model,
             step=1,
@@ -174,7 +174,7 @@ def load_table_concate_to_process(dirFilesCSV, nameReg, showPlot= True):
             importance_getter= 'auto'
         )
 
-    rfecv.fit(concat_df[colunas], concat_df['classe'])
+    rfecv.fit(concat_df[colunas], concat_df['class'])
     print(f"Optimal number of features: {rfecv.n_features_}")
     print("ranking ", rfecv.ranking_)
     print("")
@@ -240,21 +240,23 @@ def getFeatureSeleciontion_byRegion(lstPathCsvs):
 
     print("we try to work with {} regions \n ==> {}".format(len(lstReg), lstReg))
 
-
     for reg in lstReg:
-        nameProc = 'rois_shp_CERRADO_' + str(reg)
+        nameProc = 'rois_coleta_soil_' + str(reg)
         lstDirProc = []
         for cc, mdir in lstPathCsvs[:]:      
-            if  str(reg)+ '_manual' in mdir:  
+            if  str(reg) in mdir:  
                 print("processing region => ", reg, " <=> " , mdir)    
                 lstDirProc.append(mdir)    
 
         lst_rank = load_table_concate_to_process(lstDirProc, nameProc, True)
         print("lista ordenadas de bandas processadas ", lst_rank)
+
+        # sys.exit()
         lstNameBands = getNameFeature(lst_rank)
         print("Bandas importantes \n ==> ", lstNameBands)
         newdir = nameProc + '.txt'
         filesave = open(newdir, 'w+')
+
         for band_rank in lstNameBands:
             filesave.write(band_rank + '\n')
         
@@ -264,7 +266,7 @@ def getFeatureSeleciontion_byRegion(lstPathCsvs):
 if __name__ == '__main__':
 
     # /home/superusuario/Dados/mapbiomas/col8/features/
-    npath = 'version3/*.csv'
+    npath = 'roisSoils/*.csv'
     lst_pathCSV = glob.glob(npath)
     dirCSVs = [(cc, kk) for cc, kk in enumerate(lst_pathCSV[:])]
     print(lst_pathCSV)
@@ -279,5 +281,5 @@ if __name__ == '__main__':
     if analisesbyRegionOnly:        
         getFeatureSeleciontion_byRegion(dirCSVs)
 
-    else:        
-        getFeatureSeleciontion_byRegionYear(dirCSVs)
+    # else:        
+    #     getFeatureSeleciontion_byRegionYear(dirCSVs)

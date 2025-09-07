@@ -11,7 +11,7 @@ dictProjAccount = {
     'solkanGeodatin': 'geo-data-s',
     'diegoGmail': 'diegocosta',
     'diegoUEFS': 'diegocosta',
-    'superconta': 'mapbiomas'
+    'superconta': 'mapbiomas-brazil'
 }
 
 def get_current_account():
